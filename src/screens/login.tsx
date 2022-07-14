@@ -18,7 +18,12 @@ const Login : FC<Props> = (props) => {
 
     const login = async () => {
         if(email && password) {
-            const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
+            try {
+                const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
+                props.navigation.navigate('home')
+            } catch(error) {
+                Alert.alert("the email or the password are incorrect");
+            }
         } else {
             Alert.alert("Missing Fields");
         }
@@ -26,10 +31,10 @@ const Login : FC<Props> = (props) => {
 
     return(
         <View style={style.container}>
-            <ScrollView style={style.scrollView}>
+            <ScrollView style={style.scrollView} contentContainerStyle={{ flexGrow: 1}}>
                 <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
                     <View style={style.logoWrapper}>
-                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => alert("hi")}/>
+                        <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('home')}/>
                         <Image 
                         source={require('../assets/clubearLogo1.png')}
                         style={style.imageStyle}
@@ -38,7 +43,7 @@ const Login : FC<Props> = (props) => {
                     <View style={style.contentContainer}>
                         <View style={style.inputContainer}>
                             <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
-                            <Input placeholder='Password*' iconName='lock1' onChangeText={(text) => setPassword(text)} />
+                            <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
                             <TouchableOpacity onPress={() => props.navigation.navigate('signup')} >
                                 <Text style={style.textDecoration}> Forgot your password?</Text>
                             </TouchableOpacity>
@@ -82,6 +87,7 @@ const style = StyleSheet.create({
     },
     scrollView: {
         width: '100%',
+        backgroundColor: 'black'
     },
     logoWrapper: {
         flex: 1,
@@ -92,12 +98,12 @@ const style = StyleSheet.create({
         position: 'absolute',
         color: '#fff',
         paddingRight: '85%',
-        top: '3%'
+        top: '4%'
     },
     imageStyle: {
         position: 'absolute',
         width: '88%',
-        height: '45%',
+        height: '43%',
         resizeMode: 'stretch',
         top: '5%'
     },

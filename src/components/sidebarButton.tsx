@@ -40,10 +40,10 @@ const style = StyleSheet.create({
         borderRadius: 10,
         width: width / 3.3,
         marginRight: '60%',
-        marginBottom: '4%',
+        marginBottom: '10%',
     },
     buttonText: {
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: 'bold',
     },
     buttonWrapper: {

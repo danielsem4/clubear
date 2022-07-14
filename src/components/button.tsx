@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { Dimensions,Text ,View, StyleSheet, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-paper";
 
+// Login and signup buttons 
 const {height, width} = Dimensions.get('screen');
 
 interface Props {

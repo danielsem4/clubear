@@ -1,6 +1,8 @@
 import SignUp from "./signUp";
 import Login from "./login";
 import Home from "./home";
-import Sidebar from "./sidebar"
+import AboutClub from "./aboutTheClub"
+import ForgotPassword from "./forgotPassword";
 
-export {SignUp, Login, Home, Sidebar}
+
+export {SignUp, Login, Home, AboutClub, ForgotPassword}

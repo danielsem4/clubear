@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { View, StyleSheet, Image, ImageBackground, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, StyleSheet, Image, ImageBackground, ScrollView, Dimensions, Alert, KeyboardAvoidingView } from 'react-native';
 import { Input, Button } from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import '../constants/firebase'
@@ -22,10 +22,10 @@ const SignUp : FC<Props> = (props) => {
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
     const [signedIn, setSignedIn] = useState<boolean>(true);
 
-    signedIn
 
     const signup = async () => {
         if(name && email && password && repeatPassword && phoneNumber) {
+            if((password === repeatPassword) && (phoneNumber.length == 10)) {
             try {
                 const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 if(user) {
@@ -35,28 +35,33 @@ const SignUp : FC<Props> = (props) => {
                 console.log(error);
             }
         } else {
+            Alert.alert('Error', 'try again')
+        }
+        } else {
             Alert.alert('Error', 'Missing Fields')
         }
     }
 
     return(
-        <View style={style.container}>
-            <ScrollView style={style.scrollView}>
-                <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
-                    <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => props.navigation.navigate('login')}/>
-                    <Image 
-                    source={require('../assets/clubearLogo1.png')}
-                    style={style.imageStyle}
-                    />
-                    <Input placeholder='Full Name*' iconName='user' onChangeText={(text) => setName(text)} />
-                    <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
-                    <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
-                    <Input placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
-                    <Input placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
-                    <Button title='Sign Up' onPress={signup} />
-                </ImageBackground>
-            </ScrollView>
-        </View>
+        <KeyboardAvoidingView style={style.container} behavior='height'>
+            <View style={{width: '100%'}} >
+                <ScrollView style={style.scrollView}>
+                    <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
+                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => props.navigation.navigate('login')}/>
+                        <Image 
+                        source={require('../assets/clubearLogo1.png')}
+                        style={style.imageStyle}
+                        />
+                        <Input placeholder='Full Name*' iconName='user' onChangeText={(text) => setName(text)} />
+                        <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
+                        <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
+                        <Input placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
+                        <Input placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
+                        <Button title='Sign Up' onPress={signup} />
+                    </ImageBackground>
+                </ScrollView>
+            </View>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -66,7 +71,7 @@ const style = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     imageStyle: {
         width: '88%',
@@ -87,7 +92,7 @@ const style = StyleSheet.create({
         position: 'absolute',
         color: '#fff',
         right: '90%',
-        bottom: '93%'
+        bottom: '92%'
     },
     logoWrapper: {
         flex: 1,

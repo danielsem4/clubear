@@ -23,7 +23,7 @@ const MainNav : FC = () => {
 
     return(
         <NavigationContainer>
-            {user !== null ? <AppStack /> : <AuthStack />}
+            <AppStack />
         </NavigationContainer>
     );
 }
