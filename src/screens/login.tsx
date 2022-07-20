@@ -66,7 +66,7 @@ const Login : FC<Props> = (props) => {
                             />
                         </View>
                         <View style={style.signUp}>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('signup')} >
+                            <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
                                 <Text style={style.textDecoration}>Dont Have an Account? Sign Up Here</Text>
                             </TouchableOpacity>
                         </View>

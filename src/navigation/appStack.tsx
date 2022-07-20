@@ -1,16 +1,22 @@
 import React, { FC } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {Home, SignUp, Login, ForgotPassword } from '../screens';
+import {Home, SignUp, Login, SearchBar } from '../screens';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const {Navigator, Screen} = createStackNavigator();
+
+
+type Props = NativeStackScreenProps<RootStackParamList, 'SearchBar','MyStack'>;
+
+const RootStack = createStackNavigator<RootStackParamList>();
 
 const AppStack : FC = () => {
     return(
         <Navigator screenOptions={{headerShown: false}}>
-            {/* <Screen name="forgotPassword" component={ForgotPassword} /> */}
-            <Screen name="home" component={Home}/> 
-            <Screen name="login" component={Login}/>  
-           <Screen name="signup" component={SignUp}/>
+            <Screen name="home" component={Home}  /> 
+            <Screen name="searchBar" component={SearchBar} />
+            <Screen name="login" component={Login} />  
+           <Screen name="signUp" component={SignUp} />
         </Navigator>
     );
 }

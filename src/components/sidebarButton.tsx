@@ -23,7 +23,7 @@ const SidebarButton : FC<Props> = (props) => {
     return(
         <TouchableOpacity onPress={props.onPress} style={style.buttonContainer}>
             <View style={style.buttonWrapper}>
-                <SocialBrands name={props.iconName} style={style.icon} color={props.iconColor} size={24}/>
+                <SocialBrands name={props.iconName} style={style.icon} color={props.iconColor} size={28}/>
                 <Text style={[style.buttonText, {color: props.iconColor}]}>{props.title}</Text>
             </View>
         </TouchableOpacity>

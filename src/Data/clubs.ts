@@ -6,7 +6,7 @@ const clubsList = [
         name: 'Atlanta',
         url: assets.Atlanta,
         city: 'Tel Aviv',
-        onPrees: () => {console.log(this)}
+        onPrees: () => {console.log(clubsList[0].id)}
     },
     {
         id: 1,
@@ -48,6 +48,13 @@ const clubsList = [
         name: 'MSG',
         url: assets.MSG,
         city: 'Herzelia',
+        onPrees: () => {console.log(this)}
+    },
+    {
+        id: 7,
+        name: 'MSG',
+        url: assets.MSG,
+        city: 'Hod Hasharon',
         onPrees: () => {console.log(this)}
     },
 ]
