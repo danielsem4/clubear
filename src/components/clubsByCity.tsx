@@ -4,13 +4,13 @@ import  { ClubsScroll } from './index';
 
 
 interface Props {
+    navigation: any;
     clubLocation: string;
     clubList: {
         id: number,
         name: string,
         url: string,
         city: string,
-        onPrees: () => void
     }[];
 }
 
@@ -18,12 +18,10 @@ interface Props {
 const ClubsByCity : FC<Props> = (props) => {
 
     const sortedClubs = props.clubList.filter((club) => club.city === props.clubLocation);
-
-
     return(
         <View>
             <Text style={style.flatListClubNameStyle}>{props.clubLocation}</Text>
-            <ClubsScroll  clubList={sortedClubs} />
+            <ClubsScroll clubList={sortedClubs} navigation={props.navigation} />
         </View>
     )
 }

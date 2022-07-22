@@ -42,7 +42,7 @@ const style = StyleSheet.create({
         position: 'absolute',
         justifyContent: 'center',
         alignItems: 'center',
-        left: '10%',
+        left: '12%',
         marginTop: '11%',
         marginRight: '25%'
     },

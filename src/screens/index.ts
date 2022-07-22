@@ -4,6 +4,7 @@ import Home from "./home";
 import AboutClub from "./aboutTheClub"
 // import ForgotPassword from "./forgotPassword";
 import SearchBar from "./searchBar";
+import ClubInfo from "./clubInfo";
 
 
-export {SignUp, Login, Home, AboutClub, SearchBar}
+export {SignUp, Login, Home, AboutClub, SearchBar, ClubInfo}

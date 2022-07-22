@@ -4,16 +4,15 @@ import { Text ,View, StyleSheet, TouchableOpacity, Image, Dimensions, FlatList }
 const {height, width} = Dimensions.get('screen');
 
 interface Props {
+    navigation: any;
     clubList: {
         id: number,
         name: string,
         url: string,
         city: string,
-        onPrees: () => void
     }[];
 }
  
-
 const ClubsScroll : FC<Props> = (props) => {
     return(
         <View>
@@ -29,7 +28,7 @@ const ClubsScroll : FC<Props> = (props) => {
                     renderItem={({item}) => {
                         return(
                             <View style={style.flatListImageContainer}>
-                                <TouchableOpacity onPress={item.onPrees} style={style.flatListBottunContainer}>
+                                <TouchableOpacity style={style.flatListBottunContainer} onPress={() => props.navigation.navigate('clubInfo', {clubId: item.id})}>
                                     <Text style={style.flatListClubNameStyle}>{item.name}</Text>
                                     <Image style={style.flatListImageStyle} source={{uri: item.url}} />
                                 </TouchableOpacity>
@@ -51,12 +50,11 @@ const style = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 0.7,
         borderTopColor: 'white',
-        marginTop: '2%',
         borderBottomWidth: 0,
         shadowOpacity: 0,
         elevation: 0,
     },
-    flatList: { flexGrow: 0 },
+    flatList: { flexGrow: 0, },
     flatListImageContainer: {
         width,
         height: height / 3.5,

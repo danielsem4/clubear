@@ -1,19 +1,17 @@
 import React, { FC } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {Home, SignUp, Login, SearchBar } from '../screens';
+import {Home, SignUp, Login, SearchBar, ClubInfo } from '../screens';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const {Navigator, Screen} = createStackNavigator();
 
-
-type Props = NativeStackScreenProps<RootStackParamList, 'SearchBar','MyStack'>;
-
-const RootStack = createStackNavigator<RootStackParamList>();
+const RootStack = createStackNavigator();
 
 const AppStack : FC = () => {
     return(
         <Navigator screenOptions={{headerShown: false}}>
-            <Screen name="home" component={Home}  /> 
+            <Screen name="home" component={Home}  />
+            <Screen name="clubInfo" component={ClubInfo}  /> 
             <Screen name="searchBar" component={SearchBar} />
             <Screen name="login" component={Login} />  
            <Screen name="signUp" component={SignUp} />

@@ -5,7 +5,7 @@ import Icons from 'react-native-vector-icons/FontAwesome';
 import { SidebarButton, ClubsByCity, Button } from '../components';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import clubsList from '../Data/clubs';
-
+import assets from '../Data/assets.json';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -14,14 +14,17 @@ interface Props {
     title: string;
     imageName: string;
     clubCity: string;
-    onPress: () => void;
 }
 
 const cities = ['Tel Aviv', 'Herzelia', 'Rishon Lezion', 'Hod Hasharon']; 
 
 const Home : FC<Props> = (props) => {
 
+    const navigation = useNavigation();
+
     const [arrange, setArrange] = useState(false); // the clubs arrange state   
+
+    const [logedIn, setLogedIn] = useState(false);
 
     const [showMenu, setShowMenu] = useState(false); // the slideMenu useState
 
@@ -29,7 +32,7 @@ const Home : FC<Props> = (props) => {
     const scaleValue = useRef(new Animated.Value(1)).current; // side bar animation
     const closeButtonOffset = useRef(new Animated.Value(0)).current; // side bar animation
 
-    const navigation = useNavigation();
+    
 
     const search = () => {
         props.navigation.navigate('searchBar')
@@ -62,10 +65,25 @@ const Home : FC<Props> = (props) => {
         barsHandler()
     }
 
+    const HomeHeader = () => {
+        return(
+            <ImageBackground style={style.topHomeBear} source={{uri: assets.Bear}} >
+                <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barsStyle} onPress={barsHandler} />
+                <View style={style.motoTextWrapper}>
+                    <Text style={style.motoTextStyle}>Trying to find </Text>
+                    <Text style={style.motoTextStyle}>a party tonight ?</Text>
+                    <Text style={style.motoTextStyle}>Look no further</Text>
+                </View>
+            </ImageBackground>
+        )
+    }
+
     return(
         <View style={style.container}>
             <View style={style.sidebarContainer}>
                 <ImageBackground source={require('../assets/sidebar_pic3.jpg')} style={style.sidebarBackGroundContainer}>
+                    {
+                    !logedIn ?
                     <View style={style.loginButtonWrapper}> 
                     <SidebarButton 
                         iconName='login'
@@ -75,6 +93,11 @@ const Home : FC<Props> = (props) => {
                         onPress={() => props.navigation.navigate('login')}
                         />
                     </View>
+                    :
+                    <View>
+
+                    </View>
+                    }   
                     <View style={style.navigationButtonWrapper}>
                         <SidebarButton 
                         iconName='search'
@@ -106,6 +129,7 @@ const Home : FC<Props> = (props) => {
                             <Text style={style.switchText}>arrange by city</Text>
                         </View>
                     </View>
+                    {logedIn ?
                     <View style={style.logOutButtnonWrapper}>
                         <SidebarButton 
                             iconName='logout'
@@ -115,6 +139,11 @@ const Home : FC<Props> = (props) => {
                             onPress={() => Alert.alert('logout')}
                             />
                     </View>
+                    :
+                    <View>
+
+                    </View>
+                    }         
                 </ImageBackground>
             </View>
             <Animated.View style={[style.homeContainer, {transform: [
@@ -122,25 +151,18 @@ const Home : FC<Props> = (props) => {
             ]}
             ]}>
                 <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                    <View style={style.navbarContainer}>
-                        <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barsStyle} onPress={barsHandler} 
-                        />
-                        <TouchableOpacity style={style.logoButton} onPress={() => {}}>
-                            <Text style={style.logoTextStyle}> Clubear </Text>
-                        </TouchableOpacity>
-                        {/* <Icons name='search' size={30} style={style.searchStyle} onPress={search} /> */}
-                    </View>      
                     {
                     arrange !== false ? // check if the user want to sort by city or not
                     <View style={style.flatListContainer}> 
                         <FlatList
+                         ListHeaderComponent={HomeHeader}
                          style={style.flatList}
                          keyExtractor={(_, index) => index.toString()}
                          data={cities}
                          ListFooterComponent={<View style={{height: 20}}/>}
                          renderItem={({item}) => {
                             return(
-                                <ClubsByCity clubLocation={item} clubList={clubsList} />
+                                <ClubsByCity clubLocation={item} clubList={clubsList} navigation={props.navigation} />
                             )
                         }}
                         />
@@ -149,17 +171,18 @@ const Home : FC<Props> = (props) => {
                     <View style={style.flatListContainer}>
                         <FlatList
                          style={style.flatList}
+                         ListHeaderComponent={HomeHeader}
                          keyExtractor={(_, index) => index.toString()}
                          data={clubsList}
                          ListFooterComponent={<View style={{height: 20}}/>}
                          renderItem={({item}) => {
                             return(
                                 <View style={style.flatListImageContainer}>
-                                <TouchableOpacity onPress={item.onPrees} style={style.flatListBottunContainer}>
-                                    <Text style={style.flatListClubNameStyle}>{item.name}</Text>
-                                    <Image style={style.flatListImageStyle} source={{uri: item.url}} />
-                                </TouchableOpacity>
-                            </ View>
+                                    <TouchableOpacity onPress={() => props.navigation.navigate('clubInfo', {clubId: item.id})} style={style.flatListBottunsContainer}>
+                                        <Text style={style.flatListClubNameStyle}>{item.name}</Text>
+                                        <Image style={style.flatListImageStyle} source={{uri: item.url}} />
+                                    </TouchableOpacity>
+                                </ View>
                             )
                         }}
                         />
@@ -170,7 +193,6 @@ const Home : FC<Props> = (props) => {
         </View>
     );
 }
-
 
 export default Home;
 
@@ -196,50 +218,52 @@ const style = StyleSheet.create({
         width: '100%',
         height: height
     },
-    navbarContainer: { // the navbar container in the home screen
+    topHomeBear: { // the bear photo on the top of the screen
         position: 'relative',
-        backgroundColor: '#4169e1',
-        alignItems: 'center',
-        height: '10%',
-        borderRadius: 10
+        height: height / 2.55,
     },
     barsStyle: { // the burger icon style
         position: 'absolute',
         right: '90%',
-        color: '#fff',
-        top: '45%'
+        color: '#000',
+        top: '9%'
     },
-    searchStyle: { // the search icon style
+    logoButton: { // logo name position
         position: 'absolute',
-        color: '#fff',
-        left: '90%',
-        top: '45%'
-    },
-    logoButton: { // logo button position
-        position: 'absolute',
-        top: '45%'
-    },
-    logoTextStyle: { // the logo name  
+        top: '10%',
+        fontSize: 22,
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 26,
+        left: '15%'
+    },
+    motoTextWrapper: { // the moto wrapper
+        marginTop: '28%',
+        marginLeft: '2%',
+    },
+    motoTextStyle: { // the logo name  
+        color: 'white',
+        fontWeight: 'bold',
+        marginTop: '3%',
+        fontSize: 19,
+        textTransform: 'uppercase'
     },
     flatListContainer: {  // the flat list wrapper
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '2%'
     },
     flatList: { flexGrow: 1 } // the flat list style
     , 
     flatListImageContainer: { // the image size in the flat list
         width,
         height: height / 3.5,
+        
     },
-    flatListBottunContainer: { // the button size in the flat list
+    flatListBottunsContainer: { // the button size in the flat list
         height: '100%',
         width: '100%',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: '10%'
     },
     flatListClubNameStyle: { // the club name style
         fontSize: 20,
@@ -262,10 +286,10 @@ const style = StyleSheet.create({
     },
     loginButtonWrapper: { // login button wrapper (sidebar)
         position: 'relative',
-        bottom: '12%',
+        bottom: '15%',
         left: '3%'
     },
-    navigationButtonWrapper: { // the other 3 buttons (sidebar)
+    navigationButtonWrapper: {  // the other 3 buttons (sidebar)
         position: 'relative',
         left: '3%'
     },
@@ -287,6 +311,6 @@ const style = StyleSheet.create({
     },
     logOutButtnonWrapper: { // logout button wrapper (sidebar)
         top: '20%',  
-        left: '3%'
+        left: '3%',
     },
 })
