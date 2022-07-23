@@ -3,9 +3,9 @@ import { View, Text, StyleSheet, Switch, ImageBackground, Dimensions, Animated, 
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { SidebarButton, ClubsByCity, Button } from '../components';
-import { useNavigation, useRoute } from '@react-navigation/native';
 import clubsList from '../Data/clubs';
 import assets from '../Data/assets.json';
+import { color } from 'native-base/lib/typescript/theme/styled-system';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -19,8 +19,6 @@ interface Props {
 const cities = ['Tel Aviv', 'Herzelia', 'Rishon Lezion', 'Hod Hasharon']; 
 
 const Home : FC<Props> = (props) => {
-
-    const navigation = useNavigation();
 
     const [arrange, setArrange] = useState(false); // the clubs arrange state   
 
@@ -62,19 +60,32 @@ const Home : FC<Props> = (props) => {
 
     const arrangeUpdate = () => {
         setArrange(!arrange)
-        barsHandler()
     }
 
     const HomeHeader = () => {
         return(
-            <ImageBackground style={style.topHomeBear} source={{uri: assets.Bear}} >
-                <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barsStyle} onPress={barsHandler} />
-                <View style={style.motoTextWrapper}>
-                    <Text style={style.motoTextStyle}>Trying to find </Text>
-                    <Text style={style.motoTextStyle}>a party tonight ?</Text>
-                    <Text style={style.motoTextStyle}>Look no further</Text>
+            <View style={style.homeHeaderContainer}>
+                <ImageBackground style={style.topHomeBear} source={{uri: assets.Bear}} >
+                    <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barsStyle} onPress={barsHandler} />
+                    <View style={style.motoTextWrapper}>
+                        <Text style={style.motoTextStyle}>Trying to find </Text>
+                        <Text style={style.motoTextStyle}>a party tonight ?</Text>
+                        <Text style={style.motoTextStyle}>Look no further</Text>
+                    </View>
+                </ImageBackground>
+                <View style={style.sortSection}>
+                    <View style={style.togglWrapper}>
+                        <Text style={style.switchText}>Arrange by city</Text>
+                        <Switch
+                        ios_backgroundColor= 'gray'
+                        trackColor={{false: 'gray', true: 'green'}}
+                        style={style.switchStyle}
+                        value={arrange}
+                        onValueChange={arrangeUpdate}
+                        />
+                    </View>
                 </View>
-            </ImageBackground>
+            </View>
         )
     }
 
@@ -120,14 +131,6 @@ const Home : FC<Props> = (props) => {
                         title='Settings'
                         onPress={() => Alert.alert('settings')}
                         />
-                        <View style={style.togglWrapper}>
-                            <Switch
-                            style={style.switchStyle}
-                            value={arrange}
-                            onValueChange={arrangeUpdate}
-                            />
-                            <Text style={style.switchText}>arrange by city</Text>
-                        </View>
                     </View>
                     {logedIn ?
                     <View style={style.logOutButtnonWrapper}>
@@ -218,23 +221,20 @@ const style = StyleSheet.create({
         width: '100%',
         height: height
     },
+    homeHeaderContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
     topHomeBear: { // the bear photo on the top of the screen
         position: 'relative',
         height: height / 2.55,
+        width
     },
     barsStyle: { // the burger icon style
         position: 'absolute',
         right: '90%',
         color: '#000',
         top: '9%'
-    },
-    logoButton: { // logo name position
-        position: 'absolute',
-        top: '10%',
-        fontSize: 22,
-        color: 'white',
-        fontWeight: 'bold',
-        left: '15%'
     },
     motoTextWrapper: { // the moto wrapper
         marginTop: '28%',
@@ -247,6 +247,24 @@ const style = StyleSheet.create({
         fontSize: 19,
         textTransform: 'uppercase'
     },
+    sortSection: {
+        flex: 1,
+        
+    },
+    togglWrapper: {
+        display: 'flex',
+        width: '50%',
+        flexDirection: 'row-reverse',
+        alignItems: 'center'
+    },
+    switchStyle: {  // the toggl of the arrange 
+        
+    },
+    switchText: { // the toggl name
+        fontSize: 22,
+        color: '#fff',
+        borderColor: 'white',
+    },
     flatListContainer: {  // the flat list wrapper
         flex: 1,
         justifyContent: 'center',
@@ -257,13 +275,12 @@ const style = StyleSheet.create({
     flatListImageContainer: { // the image size in the flat list
         width,
         height: height / 3.5,
-        
     },
     flatListBottunsContainer: { // the button size in the flat list
         height: '100%',
         width: '100%',
         alignItems: 'center',
-        marginTop: '10%'
+        marginTop: '5%'
     },
     flatListClubNameStyle: { // the club name style
         fontSize: 20,
@@ -285,29 +302,11 @@ const style = StyleSheet.create({
         width: '100%',
     },
     loginButtonWrapper: { // login button wrapper (sidebar)
-        position: 'relative',
         bottom: '15%',
         left: '3%'
     },
     navigationButtonWrapper: {  // the other 3 buttons (sidebar)
-        position: 'relative',
         left: '3%'
-    },
-    togglWrapper: {
-        position: 'absolute',
-        top: '95%'
-    },
-    switchStyle: {  // the toggl of the arrange 
-        color: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: '90%',
-    },
-    switchText: { // the toggl name
-        fontSize: 22,
-        color: '#fff',
-        bottom: '50%',
-        left: '13%'
     },
     logOutButtnonWrapper: { // logout button wrapper (sidebar)
         top: '20%',  
