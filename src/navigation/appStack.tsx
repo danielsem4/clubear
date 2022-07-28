@@ -8,13 +8,16 @@ const {Navigator, Screen} = createStackNavigator();
 const RootStack = createStackNavigator();
 
 const AppStack : FC = () => {
+
+    
+
     return(
         <Navigator screenOptions={{headerShown: false}}>
-            <Screen name="home" component={Home}  />
-            <Screen name="clubInfo" component={ClubInfo}  /> 
-            <Screen name="searchBar" component={SearchBar} />
-            <Screen name="login" component={Login} />  
-           <Screen name="signUp" component={SignUp} />
+            <Screen name='home' component={Home} />
+            <Screen name='clubInfo' component={ClubInfo}  /> 
+            <Screen name='searchBar' component={SearchBar} />
+            <Screen name='login' component={Login} />  
+           <Screen name='signUp' component={SignUp} />
         </Navigator>
     );
 }

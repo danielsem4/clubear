@@ -4,26 +4,18 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import AppStack from './appStack';
 import AuthStack from './authStack';
+import { RootState } from '../redux/store';
+import { useSelector } from 'react-redux';
 
 
 const MainNav : FC = () => {
-    const [user, setUser] = useState<any>(null);
 
-    const bootstrap = () => {
-        firebase.auth().onAuthStateChanged(_user => {
-            if(_user){
-                setUser(_user)
-            }
-        })
-    }
-
-    useEffect(() => {
-        bootstrap()
-    }, [])
+    const screenState = useSelector((state: RootState) => state.user);
 
     return(
         <NavigationContainer>
-            <AppStack />
+            { screenState.load ?  <AppStack /> : <AuthStack /> }
+            {console.log(screenState.load)}
         </NavigationContainer>
     );
 }

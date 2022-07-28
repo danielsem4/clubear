@@ -2,10 +2,13 @@ import React, { FC, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Switch, ImageBackground, Dimensions, Animated, Alert, TouchableOpacity, Image, FlatList } from 'react-native';
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import { SidebarButton, ClubsByCity, Button } from '../components';
+import { SidebarButton, ClubsByCity, Input } from '../components';
 import clubsList from '../Data/clubs';
-import assets from '../Data/assets.json';
-import { color } from 'native-base/lib/typescript/theme/styled-system';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/reducers'
+
 
 const {height, width} = Dimensions.get('screen');
 
@@ -16,13 +19,15 @@ interface Props {
     clubCity: string;
 }
 
-const cities = ['Tel Aviv', 'Herzelia', 'Rishon Lezion', 'Hod Hasharon']; 
+const cities = ['Tel Aviv', 'Herzelia', 'Rishon Lezion', 'Hod Hasharon', 'Bat-yam']; 
 
 const Home : FC<Props> = (props) => {
 
-    const [arrange, setArrange] = useState(false); // the clubs arrange state   
+    const clubs = clubsList
 
-    const [logedIn, setLogedIn] = useState(false);
+    const dispatch = useDispatch()
+
+    const screenState = useSelector((state: RootState) => state.user);  
 
     const [showMenu, setShowMenu] = useState(false); // the slideMenu useState
 
@@ -30,10 +35,14 @@ const Home : FC<Props> = (props) => {
     const scaleValue = useRef(new Animated.Value(1)).current; // side bar animation
     const closeButtonOffset = useRef(new Animated.Value(0)).current; // side bar animation
 
-    
+    const logout = () => {
+        Alert.alert("loged out ")
+        dispatch(useActions.setLogedIn())
+    }
 
     const search = () => {
-        props.navigation.navigate('searchBar')
+        const searchedClubs = clubsList.filter((input) => input.name === clubsList.values.name)
+        return clubs
     }
 
     const barsHandler = () => {
@@ -58,14 +67,10 @@ const Home : FC<Props> = (props) => {
         setShowMenu(!showMenu);
     }
 
-    const arrangeUpdate = () => {
-        setArrange(!arrange)
-    }
-
     const HomeHeader = () => {
         return(
             <View style={style.homeHeaderContainer}>
-                <ImageBackground style={style.topHomeBear} source={{uri: assets.Bear}} >
+                <ImageBackground style={style.topHomeBear} source={require('../assets/bear_pic.png')} >
                     <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barsStyle} onPress={barsHandler} />
                     <View style={style.motoTextWrapper}>
                         <Text style={style.motoTextStyle}>Trying to find </Text>
@@ -73,17 +78,8 @@ const Home : FC<Props> = (props) => {
                         <Text style={style.motoTextStyle}>Look no further</Text>
                     </View>
                 </ImageBackground>
-                <View style={style.sortSection}>
-                    <View style={style.togglWrapper}>
-                        <Text style={style.switchText}>Arrange by city</Text>
-                        <Switch
-                        ios_backgroundColor= 'gray'
-                        trackColor={{false: 'gray', true: 'green'}}
-                        style={style.switchStyle}
-                        value={arrange}
-                        onValueChange={arrangeUpdate}
-                        />
-                    </View>
+                <View style={style.searchInputContainer} >
+                    <Input placeholder='Search' iconName='search1' onChangeText={search} />
                 </View>
             </View>
         )
@@ -94,7 +90,7 @@ const Home : FC<Props> = (props) => {
             <View style={style.sidebarContainer}>
                 <ImageBackground source={require('../assets/sidebar_pic3.jpg')} style={style.sidebarBackGroundContainer}>
                     {
-                    !logedIn ?
+                    !screenState.logedIn ?
                     <View style={style.loginButtonWrapper}> 
                     <SidebarButton 
                         iconName='login'
@@ -105,8 +101,8 @@ const Home : FC<Props> = (props) => {
                         />
                     </View>
                     :
-                    <View>
-
+                    <View style={style.welcomeContainer}>
+                        <Text style={style.wolcomeTextStyle}> Welcome dear {screenState.user} {'\n'} lets have a party tonight</Text>
                     </View>
                     }   
                     <View style={style.navigationButtonWrapper}>
@@ -132,14 +128,14 @@ const Home : FC<Props> = (props) => {
                         onPress={() => Alert.alert('settings')}
                         />
                     </View>
-                    {logedIn ?
+                    {screenState.logedIn  ?
                     <View style={style.logOutButtnonWrapper}>
                         <SidebarButton 
                             iconName='logout'
                             iconColor='#fff'
                             buttonColor='#b3b3ff'
                             title='Logout'
-                            onPress={() => Alert.alert('logout')}
+                            onPress={logout}
                             />
                     </View>
                     :
@@ -154,8 +150,6 @@ const Home : FC<Props> = (props) => {
             ]}
             ]}>
                 <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                    {
-                    arrange !== false ? // check if the user want to sort by city or not
                     <View style={style.flatListContainer}> 
                         <FlatList
                          ListHeaderComponent={HomeHeader}
@@ -170,27 +164,6 @@ const Home : FC<Props> = (props) => {
                         }}
                         />
                     </View> 
-                    :
-                    <View style={style.flatListContainer}>
-                        <FlatList
-                         style={style.flatList}
-                         ListHeaderComponent={HomeHeader}
-                         keyExtractor={(_, index) => index.toString()}
-                         data={clubsList}
-                         ListFooterComponent={<View style={{height: 20}}/>}
-                         renderItem={({item}) => {
-                            return(
-                                <View style={style.flatListImageContainer}>
-                                    <TouchableOpacity onPress={() => props.navigation.navigate('clubInfo', {clubId: item.id})} style={style.flatListBottunsContainer}>
-                                        <Text style={style.flatListClubNameStyle}>{item.name}</Text>
-                                        <Image style={style.flatListImageStyle} source={{uri: item.url}} />
-                                    </TouchableOpacity>
-                                </ View>
-                            )
-                        }}
-                        />
-                    </View>
-                    }
                 </ImageBackground>
             </Animated.View>
         </View>
@@ -204,7 +177,6 @@ const style = StyleSheet.create({
         flex: 1,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
-        width: '100%',
     },
     homeContainer: { // the home screen container
         flex: 1,
@@ -228,13 +200,18 @@ const style = StyleSheet.create({
     topHomeBear: { // the bear photo on the top of the screen
         position: 'relative',
         height: height / 2.55,
-        width
+        width,
     },
     barsStyle: { // the burger icon style
         position: 'absolute',
         right: '90%',
         color: '#000',
         top: '9%'
+    },
+    searchInputContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '3%'
     },
     motoTextWrapper: { // the moto wrapper
         marginTop: '28%',
@@ -247,51 +224,52 @@ const style = StyleSheet.create({
         fontSize: 19,
         textTransform: 'uppercase'
     },
-    sortSection: {
-        flex: 1,
-        
-    },
-    togglWrapper: {
-        display: 'flex',
-        width: '50%',
-        flexDirection: 'row-reverse',
-        alignItems: 'center'
-    },
-    switchStyle: {  // the toggl of the arrange 
-        
-    },
-    switchText: { // the toggl name
-        fontSize: 22,
-        color: '#fff',
-        borderColor: 'white',
+    iconStyle: {
+        color: 'red',
+        fontSize: 14,
     },
     flatListContainer: {  // the flat list wrapper
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    flatList: { flexGrow: 1 } // the flat list style
+    flatList: { flexGrow: 1} // the flat list style
     , 
     flatListImageContainer: { // the image size in the flat list
         width,
         height: height / 3.5,
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     flatListBottunsContainer: { // the button size in the flat list
-        height: '100%',
-        width: '100%',
+        height: '92%',
+        width: '90%',
+        borderRadius: 14,
         alignItems: 'center',
-        marginTop: '5%'
+        marginTop: '3%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 5,
+            height: 5
+        },
+        shadowOpacity: 0.75,
+        elevation: 15,
+        backgroundColor: '#333333'
     },
     flatListClubNameStyle: { // the club name style
-        fontSize: 20,
+        display: 'flex',
+        flex: 1,
+        fontSize: 18,
         color: 'white',
-        marginTop: '3%'
+        marginLeft: '2%',
+        marginTop: '2.5%',
+        alignSelf: 'flex-start',
     },
     flatListImageStyle: { // the image style
-        width: '90%',
-        height: '80%',
+        width: '100%',
+        height: '70%',
         borderRadius: 10,
-        resizeMode: 'cover'
+        resizeMode: 'cover',
     },
     sidebarContainer: { justifyContent: 'flex-start'} // the side bar container 
     ,
@@ -300,6 +278,17 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
+    },
+    welcomeContainer: {
+        bottom: '15%',
+        right: '20%',
+        maxWidth: '60%'
+    },
+    wolcomeTextStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 18,
+        textTransform: 'uppercase',
     },
     loginButtonWrapper: { // login button wrapper (sidebar)
         bottom: '15%',

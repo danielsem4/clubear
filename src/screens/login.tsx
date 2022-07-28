@@ -4,6 +4,9 @@ import { Input, Button, SocialButton } from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase/compat/app';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/reducers';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -13,15 +16,26 @@ interface Props {
 
 const Login : FC<Props> = (props) => {
 
+    const dispatch = useDispatch()
+    const navigation = useNavigation();
+
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
     const login = async () => {
         if(email && password) {
             try {
+                {dispatch(useActions.setLoader())}
                 const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
-                props.navigation.navigate('home')
+                if ( {user} ) {
+                    {dispatch(useActions.setLogedIn())}
+                } else {
+                    Alert.alert("Somthing went wrong");
+                }
+                {dispatch(useActions.setLoader())}
             } catch(error) {
+                {dispatch(useActions.setLoader())}
+                
                 Alert.alert("the email or the password are incorrect");
             }
         } else {
@@ -30,119 +44,97 @@ const Login : FC<Props> = (props) => {
     }
 
     return(
-        <View style={style.container}>
-            <ScrollView style={style.scrollView} contentContainerStyle={{ flexGrow: 1}}>
-                <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
-                    <View style={style.logoWrapper}>
+            <ImageBackground style={style.backGroundContainer} source={require('../assets/signup_1.jpg')}>
+                <View style={style.contentContainer}>
+                    <View style={style.headerStyle}>
                         <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('home')}/>
-                        <Image 
-                        source={require('../assets/clubearLogo1.png')}
-                        style={style.imageStyle}
+                    </View>
+                    <Image 
+                    source={require('../assets/clubearLogo1.png')}
+                    style={style.imageStyle}
+                    />
+                    <View style={style.inputContainer}>
+                        <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
+                        <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
+                        <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
+                            <Text style={style.textDecoration}> Forgot your password?</Text>
+                        </TouchableOpacity>
+                        <Button title='Login' onPress={login} />
+                    </View>
+                    <Text style={style.textDecoration}> Or login with</Text>
+                    <View style={style.socialButton}>
+                        <SocialButton
+                            iconName='facebook-square'
+                            iconColor='#fff'
+                            buttonColor='#1a1aff'
+                            onPress={() => Alert.alert('facebook')}
+                        />
+                        <SocialButton
+                            iconName='google'
+                            iconColor='#fff'
+                            buttonColor='#ff3333'
+                            onPress={() => Alert.alert('Google')}
                         />
                     </View>
-                    <View style={style.contentContainer}>
-                        <View style={style.inputContainer}>
-                            <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
-                            <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
-                            <TouchableOpacity onPress={() => props.navigation.navigate('signup')} >
-                                <Text style={style.textDecoration}> Forgot your password?</Text>
-                            </TouchableOpacity>
-                            <Button title='Login' onPress={login} />
-                        </View>
-                        <View style={style.socialButton}>
-                            <SocialButton
-                                iconName='facebook-square'
-                                iconColor='#1a1aff'
-                                buttonColor='#b3b3ff'
-                                title='Sign In with Facebook'
-                                onPress={() => Alert.alert('facebook')}
-                            />
-                            <SocialButton
-                                iconName='google'
-                                iconColor='#ff3333'
-                                buttonColor='#ffb3b3'
-                                title='Sign In with Google'
-                                onPress={() => Alert.alert('Google')}
-                            />
-                        </View>
-                        <View style={style.signUp}>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
-                                <Text style={style.textDecoration}>Dont Have an Account? Sign Up Here</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <View style={style.signUp}>
+                        <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
+                            <Text style={style.textDecoration}>Dont Have an Account? Sign Up Here</Text>
+                        </TouchableOpacity>
                     </View>
-                </ImageBackground>
-            </ScrollView>
-        </View>
+                </View>
+            </ImageBackground>
     );
 }
 
 export default Login;
 
 const style = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    scrollView: {
-        width: '100%',
-        backgroundColor: 'black'
-    },
-    logoWrapper: {
-        flex: 1,
+    backGroundContainer: { // the background image style
+        height: height,
+        width: width,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    backIcon: {
-        position: 'absolute',
+    contentContainer: { // container that wrap all the login screen elements
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    headerStyle: { // the header that wrap the back icon
+        width: '100%',
+        alignItems: 'flex-start',
+    },
+    backIcon: { // back icon style
+        marginRight: '85%',
         color: '#fff',
-        paddingRight: '85%',
-        top: '4%'
+        marginLeft: '2%'
     },
-    imageStyle: {
-        position: 'absolute',
-        width: '88%',
-        height: '43%',
-        resizeMode: 'stretch',
-        top: '5%'
+    imageStyle: { // the bear logo image style
+        height: '38%',
+        aspectRatio: 1,
+        marginBottom: '5%'
     },
-    contentContainer: {
-        position: 'absolute',
-        bottom: '3%',
-        height: '50%',
+    inputContainer: { // the input style
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        marginBottom: '5%',
+    },
+    textDecoration: { // decoration of the text on the screen 
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 15
+    },
+    socialButton: { // the social button style
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        alignItems: 'center'
     },
-    facebookIcon: {
-        color: '#1a1aff'
-    },
-    inputContainer: {
-        display: 'flex',
-        flexDirection: 'column',
+    signUp: { // the sign up style
         alignItems: 'center',
-        marginBo: '10%'
+        marginTop: '5%',
+        marginBottom: '12%'
     },
-    textDecoration: {
-        color: '#fff',
-        fontWeight: '500'
-    },
-    socialButton: {
-        marginBottom: '10%',
-        marginTop: "10%"
-    },
-    signUp: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginBottom: '10%'
-    },
-    backGroundContainer: {
-        position: 'relative',
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: height / 0.98,
-    }
 })

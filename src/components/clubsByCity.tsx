@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import clubsList from '../Data/clubs';
 import  { ClubsScroll } from './index';
 
 
@@ -19,9 +20,8 @@ const ClubsByCity : FC<Props> = (props) => {
 
     const sortedClubs = props.clubList.filter((club) => club.city === props.clubLocation);
     return(
-        <View>
-            <Text style={style.flatListClubNameStyle}>{props.clubLocation}</Text>
-            <ClubsScroll clubList={sortedClubs} navigation={props.navigation} />
+        <View style={style.clubsContainer}>
+            <ClubsScroll clubList={sortedClubs} navigation={props.navigation} clubLocation={props.clubLocation}  />
         </View>
     )
 }
@@ -31,9 +31,14 @@ export default ClubsByCity;
 
 
 const style = StyleSheet.create({
+    clubsContainer: {
+        borderBottomWidth: 0,
+        shadowOpacity: 0,
+    },
     flatListClubNameStyle: {
         fontSize: 20,
-        color: 'white',
-        marginTop: '3%'
+        color: 'lightblue',
+        marginLeft: '4%',
+        marginTop: '5%'
     },
 })

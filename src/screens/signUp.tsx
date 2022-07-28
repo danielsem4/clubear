@@ -6,6 +6,8 @@ import '../constants/firebase'
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/reducers';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -14,6 +16,8 @@ interface Props {
 }
 
 const SignUp : FC<Props> = (props) => {
+
+    const dispatch = useDispatch()
 
     const [name, setName] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
@@ -27,15 +31,21 @@ const SignUp : FC<Props> = (props) => {
         if(name && email && password && repeatPassword && phoneNumber) {
             if((password === repeatPassword) && (phoneNumber.length == 10)) {
             try {
+                {dispatch(useActions.setLoader())}
                 const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password);
                 if(user) {
                     await firebase.firestore().collection('users').doc(user.uid).set({name, email, password, phoneNumber, signedIn});
+                    {dispatch(useActions.setLoader())}
+                    {dispatch(useActions.setLogedIn())}
+                    {dispatch(useActions.updateName(name))}
+                    props.navigation.navigate('home')
                 }
             } catch(error) {
+                {dispatch(useActions.setLoader())}
                 console.log(error);
             }
         } else {
-            Alert.alert('Error', 'try again')
+            Alert.alert('The email / password / phone number incurrent', 'try again')
         }
         } else {
             Alert.alert('Error', 'Missing Fields')
@@ -44,23 +54,25 @@ const SignUp : FC<Props> = (props) => {
 
     return(
         <KeyboardAvoidingView style={style.container} behavior='height'>
-            <View style={{width: '100%'}} >
-                <ScrollView style={style.scrollView}>
-                    <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
-                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => props.navigation.navigate('login')}/>
-                        <Image 
-                        source={require('../assets/clubearLogo1.png')}
-                        style={style.imageStyle}
-                        />
+            <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
+            <View style={style.contentContainer}>
+                <View style={style.headerStyle}>
+                    <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('login')}/>
+                </View>
+                    <Image 
+                    source={require('../assets/clubearLogo1.png')}
+                    style={style.imageStyle}
+                    />
+                    <View style={style.inputContainer}>
                         <Input placeholder='Full Name*' iconName='user' onChangeText={(text) => setName(text)} />
                         <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
                         <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
                         <Input placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
                         <Input placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
                         <Button title='Sign Up' onPress={signup} />
-                    </ImageBackground>
-                </ScrollView>
-            </View>
+                    </View>
+                </View>
+            </ImageBackground>
         </KeyboardAvoidingView>
     );
 }
@@ -73,30 +85,37 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    imageStyle: {
-        width: '88%',
-        height: '45%',
-        resizeMode: 'stretch',
+    backGroundContainer: { // the background image style
+        height: height,
+        width: width,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    backGroundContainer: {
+    contentContainer: { // container that wrap all the login screen elements
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         width: '100%',
-        height: height / 0.96
     },
-    scrollView: {
+    headerStyle: { // the header that wrap the back icon
         width: '100%',
+        height: '10%',
+        alignItems: 'flex-start',
     },
-    backIcon: {
-        position: 'absolute',
+    backIcon: { // back icon style
+        marginRight: '85%',
         color: '#fff',
-        right: '90%',
-        bottom: '92%'
+        marginLeft: '2%',
+        marginTop: '10%'
     },
-    logoWrapper: {
-        flex: 1,
-        justifyContent: 'center',
+    imageStyle: { // the bear logo image style
+        height: '35%',
+        aspectRatio: 1,
+    },
+    inputContainer: { // the input style
+        display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
-    }
+        marginBottom: '7%',
+    },
 })

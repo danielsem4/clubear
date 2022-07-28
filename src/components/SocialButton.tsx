@@ -5,7 +5,6 @@ import SocialBrands from 'react-native-vector-icons/FontAwesome';
 const {height, width} = Dimensions.get('screen');
 
 interface Props {
-    title: string;
     iconColor: string;
     iconName: string;
     buttonColor: string;
@@ -18,9 +17,6 @@ const SocialButton : FC<Props> = (props) => {
             <View style={style.iconWrapper}>
                 <SocialBrands name={props.iconName} style={style.icon} color={props.iconColor} size={24}/>
             </View>
-            <View style={style.buttonWrapper}>
-                <Text style={[style.buttonText, {color: props.iconColor}]}>{props.title}</Text>
-            </View>
         </TouchableOpacity>
     )
 }
@@ -31,28 +27,16 @@ const style = StyleSheet.create({
     buttonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 15,
-        height: height / 16,
-        borderRadius: 10,
-        width: '90%',
-        marginTop: 10,
-        flexDirection: 'row'
-    },
-    buttonText: {
-        fontSize: 18,
-        fontWeight: '700'
+        height: height / 17.5,
+        borderRadius: 14,
+        width: '12%',
+        marginRight: '15%',
+        marginLeft: '15%'
     },
     iconWrapper: {
-        width: 30,
-        justifyContent: 'center',
-        alignItems: 'center'
+        width: 20,
     },
     icon: {
         fontWeight: 'bold'
     },
-    buttonWrapper: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
-    }
 })

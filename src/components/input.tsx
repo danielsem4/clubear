@@ -28,8 +28,8 @@ export default Input;
 const styles = StyleSheet.create({
     inputContainer: {
         width: width / 1.1,
-        marginTop: 5,
-        marginBottom: 10,
+        marginTop: '1.5%',
+        marginBottom: '3%',
         height: height / 16,
         borderColor: '#ccc',
         borderRadius: 10,
@@ -39,16 +39,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     iconStyle: {
-        padding: 10,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadiusColor: '#ccc',
         borderRadiusWidth: 1,
-        width: 50
+        width: '13%'
     },
     input: {
-        padding: 10,
+        padding: '3%',
         flex: 1,
         fontSize: 16,
         color: '#333',
@@ -56,13 +55,9 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     inputFielld: {
-        padding: 10,
-        marginTop: 5,
-        marginBottom: 10,
         width: width / 1.5,
         height: height / 16,
         fontSize: 16,
         borderRadius: 8,
-        borderWidth: 1
     }
 })

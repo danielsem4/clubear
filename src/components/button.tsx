@@ -27,12 +27,10 @@ const style = StyleSheet.create({
         backgroundColor: '#4a1b83',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 15,
         height: height / 16,
         borderRadius: 10,
-        width: width / 1.23,
-        paddingBottom: 15,
-        marginTop: 10
+        width: width / 1.5,
+        marginTop: '2%'
 
     },
     bigButtonText: {
