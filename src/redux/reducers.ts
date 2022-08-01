@@ -16,11 +16,11 @@ const userSlice = createSlice({
     name: 'Israel',
     initialState: initialState,
     reducers: {
-        setLoader: (state) => {
+        setLoader: state => {
             state.load = !state.load;
         },
-        updateName: (state, context) => {
-            state.user = context.type;
+        updateName: (state, action) => {
+            state.user = action.payload
         },
         setLogedIn: (state) => {
             state.logedIn = !state.logedIn;

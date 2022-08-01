@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
 import { Input, Button, SocialButton } from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase/compat/app';
@@ -7,6 +7,8 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import * as Facebook from 'expo-facebook';
+import { async } from '@firebase/util';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -22,6 +24,32 @@ const Login : FC<Props> = (props) => {
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
+    const facebookLogIn = async () => {
+        try {
+            await Facebook.initializeAsync({ 
+                appId: '786372692551742',
+            });
+            const result = await Facebook.logInWithReadPermissionsAsync({
+                permissions: ['public_profile'],
+            });
+            if (result.type === 'success') {
+                // using facebook graph API here
+                fetch(`https://graph.facebook.com/me?access_token=${result.token}&fields=id,name,email`)
+                .then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    dispatch(useActions.setLogedIn());
+                    dispatch(useActions.updateName(data.name));
+                    props.navigation.navigate('home');
+                })
+                .catch(e => console.log(e));
+            } 
+        }  catch ({message}) {
+            alert(`Facebook Login Error: ${message}`)
+        }
+    }
+
     const login = async () => {
         if(email && password) {
             try {
@@ -29,6 +57,7 @@ const Login : FC<Props> = (props) => {
                 const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
                 if ( {user} ) {
                     {dispatch(useActions.setLogedIn())}
+                    dispatch(useActions.updateName({user}));
                 } else {
                     Alert.alert("Somthing went wrong");
                 }
@@ -44,6 +73,7 @@ const Login : FC<Props> = (props) => {
     }
 
     return(
+        <KeyboardAvoidingView behavior='padding'>
             <ImageBackground style={style.backGroundContainer} source={require('../assets/signup_1.jpg')}>
                 <View style={style.contentContainer}>
                     <View style={style.headerStyle}>
@@ -67,13 +97,7 @@ const Login : FC<Props> = (props) => {
                             iconName='facebook-square'
                             iconColor='#fff'
                             buttonColor='#1a1aff'
-                            onPress={() => Alert.alert('facebook')}
-                        />
-                        <SocialButton
-                            iconName='google'
-                            iconColor='#fff'
-                            buttonColor='#ff3333'
-                            onPress={() => Alert.alert('Google')}
+                            onPress={() => facebookLogIn()}
                         />
                     </View>
                     <View style={style.signUp}>
@@ -83,6 +107,7 @@ const Login : FC<Props> = (props) => {
                     </View>
                 </View>
             </ImageBackground>
+            </KeyboardAvoidingView>
     );
 }
 

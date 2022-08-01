@@ -70,8 +70,8 @@ const ClubsScroll : FC<Props> = (props) => {
                             (index + 1) * width,
                             
                         ];
-                        const colorOutputRange = ['white', 'green', 'white']
-                        const scaleOutputRange = [0.5, 1, 0.5];
+                        const colorOutputRange = ['white', '#ccccff', 'white']
+                        const scaleOutputRange = [0.5, 0.9, 0.5];
                         const dotScale = animatedValue.interpolate({
                             inputRange,
                             outputRange: scaleOutputRange,

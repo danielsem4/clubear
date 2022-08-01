@@ -1,11 +1,11 @@
 import SignUp from "./signUp";
 import Login from "./login";
 import Home from "./home";
-import AboutClub from "./aboutTheClub"
+import About from "./about";
 // import ForgotPassword from "./forgotPassword";
-import SearchBar from "./searchBar";
 import ClubInfo from "./clubInfo";
 import AppLoader from "./appLoader";
+import Order from "./order";
 
 
-export {SignUp, Login, Home, AboutClub, SearchBar, ClubInfo, AppLoader}
+export {SignUp, Login, Home, About , ClubInfo, AppLoader, Order}

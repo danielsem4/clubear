@@ -113,19 +113,6 @@ const clubsList = [
             longitude: 34.80704
         }
     },
-    {
-        id: 8,
-        name: 'MSG',
-        url: assets.MSG,
-        city: 'Bat-yam',
-        age: '21+',
-        musicType: 'pop,mainstream ',
-        openingTime: 'Thursday - Saturday   20:00 - 24:00',
-        about: 'zzzzzzzzzzzzzzz',
-        mapCoordinates: {
-            latitude: 32.16046,
-            longitude: 34.80704
-        }
-    },
+
 ]
 export default clubsList

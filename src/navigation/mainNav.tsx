@@ -15,7 +15,6 @@ const MainNav : FC = () => {
     return(
         <NavigationContainer>
             { screenState.load ?  <AppStack /> : <AuthStack /> }
-            {console.log(screenState.load)}
         </NavigationContainer>
     );
 }

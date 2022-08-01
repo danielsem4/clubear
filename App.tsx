@@ -1,6 +1,6 @@
 import React from 'react';
 import './src/constants/firebase'
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import MainNav from './src/navigation/mainNav';
 import 'react-native-gesture-handler';
 import { Provider as ReduxProvider } from 'react-redux';
