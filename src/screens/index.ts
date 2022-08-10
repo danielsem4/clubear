@@ -6,6 +6,8 @@ import About from "./about";
 import ClubInfo from "./clubInfo";
 import AppLoader from "./appLoader";
 import Order from "./order";
+import Settings from "./settings";
+import Admin from "./admin";
 
 
-export {SignUp, Login, Home, About , ClubInfo, AppLoader, Order}
+export {SignUp, Login, Home, About , ClubInfo, AppLoader, Order, Settings, Admin}

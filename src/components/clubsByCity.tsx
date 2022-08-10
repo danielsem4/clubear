@@ -1,17 +1,23 @@
 import React, { FC } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import clubsList from '../Data/clubs';
-import  { ClubsScroll } from './index';
+import  ClubsScroll  from './clubsScroll';
 
 
 interface Props {
     navigation: any;
     clubLocation: string;
     clubList: {
-        id: number,
         name: string,
         url: string,
         city: string,
+        about: string,
+        age: string,
+        openingTime: string,
+        musicType: string,
+        mapCoordinates: {
+            latitude: number,
+            longitude: number
+        }
     }[];
 }
 

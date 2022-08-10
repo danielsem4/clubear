@@ -1,7 +1,11 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { FC } from "react";
 import { View, StyleSheet, ImageBackground, Dimensions, Text } from "react-native";
 import BackIcon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { RootState } from "../redux/store";
+import about from '../Data/staticInfo';
+
 
 const {height, width} = Dimensions.get('screen');
 
@@ -11,7 +15,9 @@ interface Props{
 
 const About : FC<Props> = (props) => {
 
-    const navigation = useNavigation();
+    const dispatch = useDispatch()
+
+    const screenState = useSelector((state: RootState) => state.user);  
 
     return(
         <View style={style.container}>
@@ -19,6 +25,13 @@ const About : FC<Props> = (props) => {
                 <ImageBackground style={style.topAboutBear} source={require('../assets/bear_pic.png')} >
                     <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('home')}/>
                 </ImageBackground>
+                <View style={style.aboutContainer}>
+                    <Text style={screenState.language ? style.aboutStyleEn : style.aboutStyleHb}>{
+                    screenState.language ? about.en['about']
+                    :
+                    about.hb['about']
+                }</Text>
+                </View>
             </ImageBackground>
         </View>
     );
@@ -39,11 +52,29 @@ const style = StyleSheet.create({
     },
     topAboutBear: {
         width: '100%',
-        height: '65%'
+        maxHeight: '35%',
+        height: '100%',
     },
     backIcon: {
         marginTop: '5%',
         marginLeft: '2%',
         color: '#fff',
+    },
+    aboutContainer: {
+        justifyContent: 'center',
+        alignContent: 'center',
+        alignItems: 'center'
+    },
+    aboutStyleEn: {
+        color: 'white',
+        fontSize: 24,
+        textAlign: 'center',
+        width: '90%'
+    },
+    aboutStyleHb: {
+        color: 'white',
+        fontSize: 20,
+        textAlign: 'center',
+        width: '90%'
     }
 })

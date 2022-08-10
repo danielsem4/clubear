@@ -1,6 +1,6 @@
 import assets from './assets.json';
 
-const clubsList = [
+const clubsListEn = [
     {
         id: 0,
         name: 'Atlanta',
@@ -115,4 +115,4 @@ const clubsList = [
     },
 
 ]
-export default clubsList
+export default clubsListEn

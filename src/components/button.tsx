@@ -8,13 +8,15 @@ const {height, width} = Dimensions.get('screen');
 interface Props {
     smallSize?: boolean;
     title: string;
+    color?: string;
     onPress: () => void;
 }
 
 // used smallSize to indicate if the button i need is small or big
 const Button : FC<Props> = (props) => {
     return(
-        <TouchableOpacity onPress={props.onPress} style={props.smallSize ? style.smallButtonContainer : style.bigButtonContainer}>
+        <TouchableOpacity onPress={props.onPress}
+         style={props.smallSize ? [style.smallButtonContainer, {backgroundColor: props.color}] : [style.bigButtonContainer, {backgroundColor: props.color}]}>
             <Text style={props.smallSize ? style.smallButtonText : style.bigButtonText}>{props.title}</Text>
         </TouchableOpacity>
     )

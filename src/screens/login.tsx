@@ -1,9 +1,9 @@
 import React, { FC, useState } from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground, KeyboardAvoidingView, Dimensions, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, KeyboardAvoidingView, Dimensions, Alert, Platform, Keyboard } from 'react-native';
 import { Input, Button, SocialButton } from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import firebase from 'firebase/compat/app';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -53,18 +53,22 @@ const Login : FC<Props> = (props) => {
     const login = async () => {
         if(email && password) {
             try {
+                props.navigation.navigate('appLoader');
                 {dispatch(useActions.setLoader())}
                 const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
-                if ( {user} ) {
+                if (email == 'admin@gmail.com') {
+                    dispatch(useActions.setAdmin());
+                }
+                if ({user}) {
                     {dispatch(useActions.setLogedIn())}
-                    dispatch(useActions.updateName({user}));
+                    props.navigation.navigate('home');
                 } else {
                     Alert.alert("Somthing went wrong");
                 }
                 {dispatch(useActions.setLoader())}
             } catch(error) {
+                props.navigation.navigate('login');
                 {dispatch(useActions.setLoader())}
-                
                 Alert.alert("the email or the password are incorrect");
             }
         } else {
@@ -73,23 +77,27 @@ const Login : FC<Props> = (props) => {
     }
 
     return(
-        <KeyboardAvoidingView behavior='padding'>
-            <ImageBackground style={style.backGroundContainer} source={require('../assets/signup_1.jpg')}>
-                <View style={style.contentContainer}>
+        <KeyboardAvoidingView style={style.container} behavior='height'>
+            <ImageBackground source={require('../assets/signup_1.jpg')} style={style.backGroundContainer}>
+                <View style={style.container}>
                     <View style={style.headerStyle}>
                         <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('home')}/>
                     </View>
-                    <Image 
-                    source={require('../assets/clubearLogo1.png')}
-                    style={style.imageStyle}
-                    />
+                    <View style={style.imageContainer}>
+                        <TouchableOpacity style={{width, alignItems: 'center'}} onPress={Keyboard.dismiss}>
+                        <Image 
+                        source={require('../assets/clubearLogo1.png')}
+                        style={style.imageStyle}
+                        />
+                        </TouchableOpacity>
+                    </View>
                     <View style={style.inputContainer}>
-                        <Input placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
-                        <Input placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
+                        <Input shortInput={false} placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
+                        <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
                         <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
                             <Text style={style.textDecoration}> Forgot your password?</Text>
                         </TouchableOpacity>
-                        <Button title='Login' onPress={login} />
+                        <Button color='#4a1b83' title='Login' onPress={login} />
                     </View>
                     <Text style={style.textDecoration}> Or login with</Text>
                     <View style={style.socialButton}>
@@ -104,10 +112,10 @@ const Login : FC<Props> = (props) => {
                         <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
                             <Text style={style.textDecoration}>Dont Have an Account? Sign Up Here</Text>
                         </TouchableOpacity>
-                    </View>
+                    </View> 
                 </View>
             </ImageBackground>
-            </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
     );
 }
 
@@ -120,31 +128,40 @@ const style = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    contentContainer: { // container that wrap all the login screen elements
+    container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        width: '100%',
     },
     headerStyle: { // the header that wrap the back icon
-        width: '100%',
-        alignItems: 'flex-start',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        width,
     },
     backIcon: { // back icon style
-        marginRight: '85%',
         color: '#fff',
-        marginLeft: '2%'
+        marginLeft: '2%',
+       
+    },
+    imageContainer: { // the image container
+        width,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '35%',
+        
     },
     imageStyle: { // the bear logo image style
-        height: '38%',
+        height: '100%',
+        width: '80%',
         aspectRatio: 1,
-        marginBottom: '5%'
     },
     inputContainer: { // the input style
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         marginBottom: '5%',
+        
     },
     textDecoration: { // decoration of the text on the screen 
         color: '#fff',

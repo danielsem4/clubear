@@ -1,58 +1,73 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Animated, Alert, FlatList } from 'react-native';
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import { SidebarButton, ClubsByCity, Input } from '../components';
-import clubsList from '../Data/clubs';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
-import  { useActions }  from '../redux/reducers'
+import  { useActions }  from '../redux/reducers';
 import {LinearGradient} from 'expo-linear-gradient';
-import { useFonts } from 'expo-font';
+import firebase from 'firebase/compat/app';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
-const {height, width} = Dimensions.get('screen');
+const {height, width} = Dimensions.get('screen'); // the screen Dimensions
 
-interface Props {
+interface Props { // the home screen title, navigation opption 
     navigation: any;
     title: string;
-    imageName: string;
-    clubCity: string;
 }
 
-const cities = ['']; 
-clubsList.filter((item) => {
-    if (!cities.includes(item.city)) {
-        cities.push(item.city)
-    }
-})
-
+interface Club {
+    name: string;
+    url:string;
+    city: string;
+    age: string;
+    musicType: string;
+    openingTime: string;
+    about: string;
+    mapCoordinates: {
+        latitude: 32.05506,
+        longitude: 34.77488
+    };
+}
 
 const Home : FC<Props> = (props) => {
-    const dispatch = useDispatch()
 
-    const screenState = useSelector((state: RootState) => state.user);  
+    const dispatch = useDispatch(); // exe for redux functions
+    const screenState = useSelector((state: RootState) => state.user); // get the states from redux
 
-    let [fontsLoaded] = useFonts({
-        'RobotoSlab-VariableFont_wght': require('../assets/fonts/RobotoSlab-VariableFont_wght.ttf'),
-        'RobotoSlab-Bold': require('../assets/fonts/RobotoSlab-Bold.ttf')
-    })
-
-    const [searchButton, setSearchButton] = useState(false);
-    const [search, setSearch] = useState('');
+    const [clubs, setClubs] = useState<Club[]>([]); // the clubs 
+    const [searchButton, setSearchButton] = useState(false); // search button state
+    const [search, setSearch] = useState(''); // the search content state
     const [showMenu, setShowMenu] = useState(false); // the slideMenu useState
-    const [clubsCities, setClubsCities] = useState(cities);
-    const [filterdData, setFilterdData] = useState(clubsList);
+    const [clubsCities, setClubsCities] = useState<string[]>(['']); // the club cities state
+    const [filterdData, setFilterdData] = useState(clubs); // the clubs state
 
     const offsetValue = useRef(new Animated.Value(0)).current; // side bar animation
     const scaleValue = useRef(new Animated.Value(1)).current; // side bar animation
     const closeButtonOffset = useRef(new Animated.Value(0)).current; // side bar animation
 
+    useEffect(() => { // get the clubs info from firebase
+        const get_clubs = async () => {
+            await firebase.firestore().collectionGroup('clubs').get().then((querySnapshot) => {
+                querySnapshot.forEach(snapshot => {
+                    clubs.push(snapshot.data() as Club);
+                });
+                setClubs([...clubs]);
+            }).then(() => {
+                setClubsCities(Array.from(new Set(clubs.map(club => club.city))));
+            })
+        }
+        get_clubs();
+    }, [])
+
+    
     const searchFilter = (text: string) => {
         if (text) {
-            const FilterdData = clubsList.filter((item) => {
+            const FilterdData = clubs.filter((item) => {
                 const itemData = item.name ? item.name.toUpperCase() : '';
                 const textData = text.toUpperCase();
                 return itemData.includes(textData);
@@ -67,9 +82,9 @@ const Home : FC<Props> = (props) => {
             setClubsCities(sortedCities)
             setFilterdData(FilterdData);
         } else {
-            setClubsCities(cities);
-            setFilterdData(clubsList);
-            setSearch(text)
+            setClubsCities(Array.from(new Set(clubs.map(club => club.city))));
+            setFilterdData(clubs);
+            setSearch(text);
         }
     }
 
@@ -109,6 +124,15 @@ const Home : FC<Props> = (props) => {
                         <Text style={style.motoTextStyle}>a party tonight ?</Text>
                         <Text style={style.motoTextStyle}>Look no further</Text>
                     </View>
+                    {screenState.admin ? 
+                    <View style={{marginLeft: '10%', marginTop: '25%'}}>
+                        <Icons name= 'pencil' size= {40} color= 'white' onPress={() => props.navigation.navigate('admin')} />
+                    </View>
+                    :
+                    <View>
+
+                    </View>    
+                }
                 </ImageBackground>
             </View>
         )
@@ -140,14 +164,17 @@ const Home : FC<Props> = (props) => {
                         iconColor='#fff'
                         buttonColor='#b3b3ff'
                         title='About'
-                        onPress={() => props.navigation.navigate('about')}
+                        onPress={() => {
+                            props.navigation.navigate('appLoader');
+                            props.navigation.navigate('about');
+                        }}
                         />
                         <SidebarButton 
                         iconName='settings'
                         iconColor='#fff'
                         buttonColor='#b3b3ff'
                         title='Settings'
-                        onPress={() => Alert.alert('settings')}
+                        onPress={() => props.navigation.navigate('settings')}
                         />
                     </View>
                     {screenState.logedIn  ?
@@ -176,13 +203,15 @@ const Home : FC<Props> = (props) => {
                         {!searchButton ?
                         <View style={style.headerStyle}>
                             <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barStyle} onPress={barsHandler} />
-                            <Text style={{color: 'white', marginTop: '5%', fontSize: 26}}>CLUBEAR</Text>
+                            <TouchableOpacity style={{marginTop: '15%'}} >
+                                <Text style={{color: 'white', marginTop: '5%', fontSize: 26}}>CLUBEAR</Text>
+                            </TouchableOpacity>
                             <Icons name={'search'} size={30} style={style.searchButtonStyle} onPress={() => setSearchButton(!searchButton)} />
                         </View>
                         :
                          <View style={style.searchInputContainer} >
                             <BackIcon name="arrow-back" size={38} style={style.backIconStyle} onPress={() => {setSearchButton(!searchButton); searchFilter('')}}/>
-                            <Input searchInput={true} blurOnSubmit={false} placeholder='Search' iconName='search1' value={search} onChangeText={(text) => searchFilter(text)} />
+                            <Input shortInput={false} searchInput={true} blurOnSubmit={false} placeholder='Search' iconName='search1' value={search} onChangeText={(text) => searchFilter(text)} />
                         </View> 
                     }
                     </LinearGradient>
@@ -242,7 +271,7 @@ const style = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         height: '9%',
-        borderRadius: 5
+        borderRadius: 5,
     },
     searchInputContainer: { // the search section container 
         width: width,

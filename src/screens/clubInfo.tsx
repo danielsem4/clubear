@@ -1,23 +1,37 @@
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Image, } from 'react-native';
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import Drink from 'react-native-vector-icons/Entypo';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
-import clubsList from '../Data/clubs';
+import clubsList from '../Data/clubs_en';
 import  MapView, {Callout, Marker } from 'react-native-maps';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
-import  { useActions }  from '../redux/reducers'
+import {LinearGradient} from 'expo-linear-gradient';
+import firebase from 'firebase/compat/app';
+import { red100 } from 'react-native-paper/lib/typescript/styles/colors';
 
 
 const {height, width} = Dimensions.get('screen');
 
 interface ClubsParameters {
     navigation: any;
-    clubId: number;
+    theClub: {
+        name: string;
+        url:string;
+        city: string;
+        age: string;
+        musicType: string;
+        openingTime: string;
+        about: string;
+        mapCoordinates: {
+            latitude: number,
+            longitude: number
+    };
+    }
 }
 
 interface InfoHeadLine {
@@ -32,17 +46,20 @@ interface Coordinate {
     longitude: number;
 }
 
+
 const ClubInfo : FC<ClubsParameters> = (props) => {
 
     const dispatch = useDispatch()
 
+    const route = useRoute();
+    const club= route.params as ClubsParameters
+
     const screenState = useSelector((state: RootState) => state.user);  
 
     const navigation = useNavigation();
-    const route = useRoute();
-    const clubs= route.params as ClubsParameters
-    const selectedClub = clubsList.find((item) => item.id === clubs.clubId);
-    const coordinate = selectedClub?.mapCoordinates as Coordinate
+
+    
+
     
     const tableOrder = () => {
         if (screenState.logedIn) {
@@ -55,31 +72,34 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     return(
         <View style={style.mainContainer}>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
+            <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
                 <View style={style.headerContainer}>
                     <BackIcon name="arrow-back" size={40} style={style.backIcon} onPress={() => navigation.goBack()}/>
-                    <Text style={style.clubName}>{selectedClub?.name}</Text>
+                    <Text style={style.clubName}>{club.theClub['name']}</Text>
+                    <View />
                 </View>
-                <Image source={{uri: selectedClub?.url}} style={style.photo} />
+            </LinearGradient>
+                <Image source={{uri: club.theClub['url']}} style={style.photo} />
                 <View style={style.clubInfoWrapper}>
                 <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'info-circle'} style={style.iconStyle} />
-                        <Text style={style.clubInfoTextContent}>{selectedClub?.about} </Text>
+                        <Text style={style.clubInfoTextContent}>{club.theClub['about']} </Text>
                     </View>
                     <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'map-pin'} style={style.iconStyle} />
-                        <Text style={style.clubInfoTextContent}>{selectedClub?.city}</Text>
+                        <Text style={style.clubInfoTextContent}>{club.theClub['city']}</Text>
                     </View>
                     <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'clock-o'} style={style.iconStyle} />
-                        <Text style={style.clubInfoTextContent}>{selectedClub?.openingTime}</Text>
+                        <Text style={style.clubInfoTextContent}>{club.theClub['openingTime']}</Text>
                     </View>
                     <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'music'} style={style.iconStyle} />
-                        <Text style={style.clubInfoTextContent}>{selectedClub?.musicType}</Text>
+                        <Text style={style.clubInfoTextContent}>{club.theClub['musicType']}</Text>
                     </View>
                     <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'id-card-o'} style={style.iconStyle} />
-                        <Text style={style.clubInfoTextContent}>{selectedClub?.age}</Text>
+                        <Text style={style.clubInfoTextContent}>{club.theClub['age']}</Text>
                     </View>
                 </View>
                 <View style={{flex: 1}}>
@@ -97,14 +117,14 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                      style={style.map}
                      initialRegion={
                         {
-                        ...coordinate,
-                        latitudeDelta: 0.002,
-                        longitudeDelta: 0.002
+                        ...club.theClub['mapCoordinates'],
+                        latitudeDelta: 0.004,
+                        longitudeDelta: 0.004
                     }   
                      }
                      >
                         <Marker
-                         coordinate={coordinate}
+                         coordinate={club.theClub['mapCoordinates']}
                         pinColor= "red"
                         >
                             <Callout>
@@ -123,27 +143,36 @@ export default ClubInfo
 
 
 const style = StyleSheet.create({
-    mainContainer: {
+    mainContainer: { // the page container
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         alignContent: 'center',
     },
-    photo: { 
-        height: '25%',
+    headerWrapper: {
+        borderWidth: 0.4,
+        height: '8%',
+        borderRadius: 5
     },
     headerContainer: {
+        flex: 1,
         flexDirection: 'row',
-        justifyContent: 'flex-start',
-        marginTop: '8%',
+        alignContent: 'center',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '4%',
     },
     backIcon: {
-        color: 'white',
+        color: 'white'
     },
     clubName: {
         fontSize: 32,
         color: 'white',
-        marginLeft: '30%'
+        marginRight: '6%',
+        marginTop: '0.5 %'
+    },
+    photo: { // the club picture
+        height: '25%',
     },
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
@@ -186,7 +215,6 @@ const style = StyleSheet.create({
     },
     map: {
         flex: 1,
-        width,
-        height: height / 5
+
     }
 })

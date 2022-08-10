@@ -13,12 +13,21 @@ interface Props {
     onChangeText: (text: string) => void;
     secureTextEntry?: boolean;
     searchInput?: boolean;
+    shortInput: boolean
 }
 
 const Input : FC<Props> = (props) => {
     return(
+        !props.shortInput ?
         <View style={props.searchInput ? styles.searchInputContainer : styles.inputContainer}>
             <View style={styles.iconStyle}>
+                <AntDesign name={props.iconName} size={24} />
+            </View>
+            <TextInput blurOnSubmit={props.blurOnSubmit} style={styles.input} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
+        </View>
+        :
+        <View style={styles.shortinputContainer}>
+            <View style={styles.shortIconStyle}>
                 <AntDesign name={props.iconName} size={24} />
             </View>
             <TextInput blurOnSubmit={props.blurOnSubmit} style={styles.input} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
@@ -55,6 +64,19 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: '#fff'
     },
+    shortinputContainer: {
+        width: width / 3.3,
+        marginTop: '1.5%',
+        marginBottom: '3%',
+        height: height / 16,
+        borderColor: '#ccc',
+        borderRadius: 10,
+        borderWidth: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#fff'
+    },
     iconStyle: {
         height: '100%',
         justifyContent: 'center',
@@ -75,7 +97,14 @@ const styles = StyleSheet.create({
         width: width / 1.5,
         height: height / 16,
         fontSize: 16,
-        borderRadius: 8,
-        
-    }
+        borderRadius: 8,   
+    },
+    shortIconStyle: {
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadiusColor: '#ccc',
+        borderRadiusWidth: 1,
+        width: '23%',
+    },
 })
