@@ -2,12 +2,9 @@ import React, { FC, useState } from 'react';
 import { View, StyleSheet, Image, ImageBackground, Dimensions, Alert, KeyboardAvoidingView, Keyboard, TouchableOpacity } from 'react-native';
 import { Input, Button} from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import '../constants/firebase'
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
+import * as firebaseFunctions from '../constants/firebaseauth';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -24,33 +21,27 @@ const SignUp : FC<Props> = (props) => {
     const [password, setPassword] = useState<string | null>(null);
     const [repeatPassword, setRepeatPassword] = useState<string | null>(null);
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-    const [signedIn, setSignedIn] = useState<boolean>(true);
 
-
+    // sign up new user
     const signup = async () => {
         if(name && email && password && repeatPassword && phoneNumber) {
             if((password === repeatPassword) && (phoneNumber.length == 10)) {
                 props.navigation.navigate('appLoader');
-            try {
-                {dispatch(useActions.setLoader())}
-                const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password);
-                if(user) {
-                    await firebase.firestore().collection('users').doc(user.uid).set({name, email, password, phoneNumber, signedIn});
-                    {dispatch(useActions.setLoader())};
+                const result = await firebaseFunctions.signUp(name, email, password, phoneNumber)
+                if (result) {
                     {dispatch(useActions.setLogedIn())};
                     {dispatch(useActions.updateName(name))};
                     props.navigation.navigate('home');
+                } else {
+                    {dispatch(useActions.setLoader())}
+                    props.navigation.navigate('signUp');
                 }
-            } catch(error) {
-                {dispatch(useActions.setLoader())}
-                props.navigation.navigate('signUp');
+            } else {
+                    Alert.alert('The email / password / phone number incurrent', 'try again');
+                    props.navigation.navigate('signUp');
             }
         } else {
-            Alert.alert('The email / password / phone number incurrent', 'try again');
-            props.navigation.navigate('signUp');
-        }
-        } else {
-            Alert.alert('Error', 'Missing Fields');
+                Alert.alert('Error', 'Missing Fields');
         }
     }
 
@@ -73,7 +64,7 @@ const SignUp : FC<Props> = (props) => {
                             <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
                             <Input shortInput={false} placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
                             <Input shortInput={false} placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
-                            <Button color='#4a1b83' title='Login' onPress={signup} />
+                            <Button color='#4a1b83' title='Sign up' onPress={signup} />
                         </View>
                 </View>
             </ImageBackground>

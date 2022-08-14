@@ -1,6 +1,8 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Animated, Alert, FlatList } from 'react-native';
 import 'firebase/compat/auth';
+import firebase from 'firebase/compat/app';
+import '../constants/firebase'
 import Icons from 'react-native-vector-icons/FontAwesome';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import { SidebarButton, ClubsByCity, Input } from '../components';
@@ -9,7 +11,6 @@ import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import {LinearGradient} from 'expo-linear-gradient';
-import firebase from 'firebase/compat/app';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
@@ -125,7 +126,7 @@ const Home : FC<Props> = (props) => {
                         <Text style={style.motoTextStyle}>Look no further</Text>
                     </View>
                     {screenState.admin ? 
-                    <View style={{marginLeft: '10%', marginTop: '25%'}}>
+                    <View style={{marginLeft: '10%', marginTop: '15%'}}>
                         <Icons name= 'pencil' size= {40} color= 'white' onPress={() => props.navigation.navigate('admin')} />
                     </View>
                     :

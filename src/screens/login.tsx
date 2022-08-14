@@ -2,13 +2,12 @@ import React, { FC, useState } from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground, KeyboardAvoidingView, Dimensions, Alert, Platform, Keyboard } from 'react-native';
 import { Input, Button, SocialButton } from '../components';
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import firebase from 'firebase/compat/app';
 import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Facebook from 'expo-facebook';
-import { async } from '@firebase/util';
+import * as firebaseFunctions from '../constants/firebaseauth';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -24,6 +23,7 @@ const Login : FC<Props> = (props) => {
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
+    // facebook login
     const facebookLogIn = async () => {
         try {
             await Facebook.initializeAsync({ 
@@ -50,26 +50,20 @@ const Login : FC<Props> = (props) => {
         }
     }
 
+    // email and password login
     const login = async () => {
         if(email && password) {
-            try {
-                props.navigation.navigate('appLoader');
-                {dispatch(useActions.setLoader())}
-                const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
+            props.navigation.navigate('appLoader');
+            const result = await firebaseFunctions.login(email, password);
+            if (result) {
                 if (email == 'admin@gmail.com') {
                     dispatch(useActions.setAdmin());
                 }
-                if ({user}) {
-                    {dispatch(useActions.setLogedIn())}
-                    props.navigation.navigate('home');
-                } else {
-                    Alert.alert("Somthing went wrong");
-                }
-                {dispatch(useActions.setLoader())}
-            } catch(error) {
+                {dispatch(useActions.setLogedIn())}
+                props.navigation.navigate('home');
+            } else {
                 props.navigation.navigate('login');
-                {dispatch(useActions.setLoader())}
-                Alert.alert("the email or the password are incorrect");
+                Alert.alert("email or password are incurrent");
             }
         } else {
             Alert.alert("Missing Fields");

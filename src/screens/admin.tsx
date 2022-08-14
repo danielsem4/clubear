@@ -1,17 +1,17 @@
-import React, { FC, useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Animated, Alert, FlatList, KeyboardAvoidingView } from 'react-native';
+import React, { FC, useEffect, useState } from "react";
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, KeyboardAvoidingView } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import ButtonIcon from 'react-native-vector-icons/MaterialIcons';
-import { Button, Input } from '../components';
+import { Input } from '../components';
 import 'firebase/compat/auth';
 import {LinearGradient} from 'expo-linear-gradient';
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { useActions } from "../redux/reducers";
 import firebase from 'firebase/compat/app';
-import { async } from "@firebase/util";
+import * as ImagePicker from 'expo-image-picker';
+import * as firebaseFunctions from '../constants/firebaseauth';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -22,10 +22,11 @@ interface Props {
 const Admin : FC<Props> = (props) => {
 
     const todoRef = firebase.firestore().collection('clubs');
-    const [addData, setAddData] = useState('');
 
-    const [pictureStatus, setPictureStatus] = useState(false);
-    console.log(pictureStatus);
+    const [hasGalleryPermission, setHasGalleryPermission] = useState(false);
+    const [pictureUploaded, setPictureUploaded] = useState(false);
+
+    const [image, setImage] = useState<null | string>(null);
 
     const [action, setAction] = useState(0); // what action the admin want to do 
     const [clubName, setClubName] = useState<string>(''); // the club name
@@ -38,30 +39,48 @@ const Admin : FC<Props> = (props) => {
     const [longitude, setLongitude] = useState<string>('34.74079');
     const [url, setUrl] = useState<string>('');
 
+    const pickImage = async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.granted === false) {
+            Alert.alert('You did not accept access to internal storage');
+        } else {
+            console.log(permission);
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            console.log(result);
+                if (!result.cancelled) {
+                    const imageToUploadUri = result.uri;
+                    setImage(imageToUploadUri);
+                    Alert.alert('picture loaded now upload it to the storage');
+                } else {
+                    Alert.alert('You did not chose any image');
+                }
+        }
+    };
 
-    const uploadClubPicture = () => {
-        setPictureStatus(!pictureStatus);
+    const uploadClubPicture = async () => {
+        if (image !== null && clubName !== '') {
+            await firebaseFunctions.uploadImage(image, clubName);
+            console.log("suc");
+            setPictureUploaded(!pictureUploaded);
+            const picUrl = await firebaseFunctions.getImageUrl(clubName);
+            console.log(picUrl);
+            setUrl(picUrl);
+        }
+        else {
+            Alert.alert('pls select picture or give the club name');
+        }
     }
 
-    const addNewClub = async () => {
-        if (clubName && city && age && musicType && openingTime && about && latitude && longitude) { 
-            const theLatitude: number = Number(latitude);
-            const theLongitude: number = Number(longitude);  
-            await firebase.firestore().collection('clubs').doc().set({
-            about: about,
-            age: age,
-            city: city,
-            name: clubName,
-            musicType: musicType,
-            openingTime: openingTime,
-            mapCoordinates: {
-                latitude: theLatitude,
-                longitude: theLongitude
-            },
-            url: url
-        });
-        } else {
-            Alert.alert("missing data");
+
+    const addClub = async () => {
+        const result = await firebaseFunctions.addNewClub(clubName, city, age, musicType, openingTime, about, latitude, longitude, url)
+        if (!result) {
+            Alert.alert('missing fields');
         }
     }
 
@@ -91,27 +110,25 @@ const Admin : FC<Props> = (props) => {
                     </View>
                 );
             case 1:
-                if (pictureStatus) {
+                if (pictureUploaded) {
                 return(
                     <View style={style.inputContainer}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
-                            <Input shortInput={true} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
+                        <Input shortInput={true} placeholder='City*' iconName='enviromento' onChangeText={(text) => setCity(text)} />
                             <Input shortInput={true} placeholder='Age limit*' iconName='team' onChangeText={(text) => setAge(text)} />
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
                             <Input shortInput={true} placeholder='latitude* ' iconName='pushpino' onChangeText={(num) => setLatitude(num)} />
                             <Input shortInput={true} placeholder='longitude*' iconName='pushpino' onChangeText={(num) => setLongitude(num)} />
                         </View>
-                        <Input shortInput={true} placeholder='City*' iconName='enviromento' onChangeText={(text) => setCity(text)} />
                         <Input shortInput={false} placeholder='Music type*' iconName='sound' onChangeText={(text) => setMusicType(text)} />
                         <Input shortInput={false} placeholder='Opening time*' iconName='hourglass' onChangeText={(text) => setOpeningTime(text)} />
                         <Input shortInput={false} placeholder='about*' iconName='infocirlceo' onChangeText={(text) => setAbout(text)} />
-                        <Input shortInput={false} placeholder='url*' iconName='picture' onChangeText={(text) => setUrl(text)} />
                         <View style={{flexDirection: 'row-reverse', justifyContent: 'space-between', width: '80%'}}>
-                        <TouchableOpacity  onPress={() => addNewClub()}>
+                        <TouchableOpacity  onPress={() => addClub()}>
                                 <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => uploadClubPicture()}>
+                            <TouchableOpacity onPress={() => {}}>
                                 <Text style={{color: 'white', fontSize: 26}}>back</Text>
                             </TouchableOpacity>
                         </View>
@@ -119,11 +136,22 @@ const Admin : FC<Props> = (props) => {
                 );} else {
                     return (
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                        <View style={{marginBottom: '50%', marginTop: '5%'}}>
-                            <Text style={{fontSize: 26, color: 'white', textAlign: 'center'}}>First upload the club image and then enter the club details with the image url from firebase</Text>
+                        <View style={{marginBottom: '10%', marginTop: '5%'}}>
+                            <Text style={{fontSize: 26, color: 'white', textAlign: 'center'}}>First set the club name and upload the club image and then enter the club details with the image url from firebase</Text>
                         </View>
-                        <Icons name='image' size={70} color="white" onPress={() => uploadClubPicture()} />
-                        <Text style={{fontSize: 18, color: 'white',}}>club image</Text>
+                        <View style={{marginBottom: '30%',}}>
+                            <Input shortInput={false} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
+                        </View>
+                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
+                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                <Icons name='image' size={70} color="white" onPress={() => pickImage()} />
+                                <Text style={{fontSize: 18, color: 'white',}}>select club image</Text>
+                            </View>
+                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                <Icons name='upload' size={70} color="white" onPress={() => uploadClubPicture()} />
+                                <Text style={{fontSize: 18, color: 'white',}}>upload club image</Text>
+                            </View>
+                        </View>
                     </View>
                 );}
             case 2:
@@ -142,7 +170,7 @@ const Admin : FC<Props> = (props) => {
                     <TouchableOpacity style={style.logoutStyle} onPress={() => props.navigation.navigate("home")}>
                         <Text style={{fontSize: 22, color: 'white'}}> Back </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{justifyContent: 'center', alignContent: 'center', alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => setAction(0)}>
+                    <TouchableOpacity style={{alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => {setAction(0); setPictureUploaded(!pictureUploaded);}}>
                         <Text style={{fontSize: 24, color: 'white'}}> Welcome Back </Text>
                     </TouchableOpacity>
                     <Icons name={'search'} size={30} style={style.searchButtonStyle} onPress={() => {}} />
