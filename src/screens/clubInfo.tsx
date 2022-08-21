@@ -1,18 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Image, } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Image, Linking, } from 'react-native';
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import Drink from 'react-native-vector-icons/Entypo';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
-import clubsList from '../Data/clubs_en';
 import  MapView, {Callout, Marker } from 'react-native-maps';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
 import {LinearGradient} from 'expo-linear-gradient';
-import firebase from 'firebase/compat/app';
-import { red100 } from 'react-native-paper/lib/typescript/styles/colors';
 
 
 const {height, width} = Dimensions.get('screen');
@@ -46,27 +43,26 @@ interface Coordinate {
     longitude: number;
 }
 
-
 const ClubInfo : FC<ClubsParameters> = (props) => {
 
-    const dispatch = useDispatch()
-
+    const dispatch = useDispatch();
     const route = useRoute();
     const club= route.params as ClubsParameters
-
     const screenState = useSelector((state: RootState) => state.user);  
-
     const navigation = useNavigation();
 
-    
-
-    
+    // navigate to order screen
     const tableOrder = () => {
         if (screenState.logedIn) {
             props.navigation.navigate('order')
         } else {
             Alert.alert("You need to login to order a table")
         }
+    }
+    
+    // send message to whatsapp
+    const contactWhatsapp = () => {
+        Linking.openURL('https://wa.me/+972542249285?text=Hello bear');
     }
 
     return(
@@ -104,7 +100,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                 </View>
                 <View style={{flex: 1}}>
                     <View style={style.contactButtonsContainer}>
-                        <TouchableOpacity style={style.whatsappButtonWrapper} onPress={() => Alert.alert('saar the gay ')}>
+                        <TouchableOpacity style={style.whatsappButtonWrapper} onPress={contactWhatsapp}>
                             <Icons name={'whatsapp'} style={style.whatsappIconStyle} />
                             <Text style={style.clubInfoTextContent}>Contact Us</Text>
                         </TouchableOpacity>
@@ -138,9 +134,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     )
 }
 
-
 export default ClubInfo
-
 
 const style = StyleSheet.create({
     mainContainer: { // the page container
@@ -215,6 +209,5 @@ const style = StyleSheet.create({
     },
     map: {
         flex: 1,
-
     }
 })

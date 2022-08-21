@@ -9,6 +9,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import * as Facebook from 'expo-facebook';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
+
 const {height, width} = Dimensions.get('screen');
 
 interface Props {
@@ -50,6 +51,16 @@ const Login : FC<Props> = (props) => {
         }
     }
 
+    // google login
+    const googleLogin = async () => {
+
+    }
+
+    // apple login
+    const appleLogin = async () => {
+
+    }
+
     // email and password login
     const login = async () => {
         if(email && password) {
@@ -79,21 +90,25 @@ const Login : FC<Props> = (props) => {
                     </View>
                     <View style={style.imageContainer}>
                         <TouchableOpacity style={{width, alignItems: 'center'}} onPress={Keyboard.dismiss}>
-                        <Image 
-                        source={require('../assets/clubearLogo1.png')}
-                        style={style.imageStyle}
-                        />
+                            <Image 
+                            source={require('../assets/clubearLogo1.png')}
+                            style={style.imageStyle}
+                            />
                         </TouchableOpacity>
                     </View>
                     <View style={style.inputContainer}>
                         <Input shortInput={false} placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
                         <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
-                        <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
+                        <TouchableOpacity onPress={() => props.navigation.navigate('forgotPassword')} >
                             <Text style={style.textDecoration}> Forgot your password?</Text>
                         </TouchableOpacity>
                         <Button color='#4a1b83' title='Login' onPress={login} />
                     </View>
-                    <Text style={style.textDecoration}> Or login with</Text>
+                    <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '60%', marginBottom: '3%'}}>
+                        <Text style={[style.textDecoration, {textAlign: 'center', alignSelf: 'center',}]}>_________________ </Text>
+                        <Text style={[style.textDecoration, {textAlign: 'center', alignSelf: 'center',}]}> Or  </Text>
+                        <Text style={[style.textDecoration, {textAlign: 'center', alignSelf: 'center',}]}>_________________</Text>
+                    </View>
                     <View style={style.socialButton}>
                         <SocialButton
                             iconName='facebook-square'
@@ -101,6 +116,24 @@ const Login : FC<Props> = (props) => {
                             buttonColor='#1a1aff'
                             onPress={() => facebookLogIn()}
                         />
+                        <SocialButton
+                            iconName='google'
+                            iconColor='#fff'
+                            buttonColor='#ff0000'
+                            onPress={() => googleLogin()}
+                        />
+                        {Platform.OS === 'ios' ?
+                        <SocialButton
+                        iconName='apple'
+                        iconColor='#fff'
+                        buttonColor='#0d0d0d'
+                        onPress={() => appleLogin()}
+                        />
+                        :
+                        <View>
+                        
+                        </View>
+                        }
                     </View>
                     <View style={style.signUp}>
                         <TouchableOpacity onPress={() => props.navigation.navigate('signUp')} >
@@ -160,13 +193,13 @@ const style = StyleSheet.create({
     textDecoration: { // decoration of the text on the screen 
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: 15
+        fontSize: 15,
     },
     socialButton: { // the social button style
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-evenly',
     },
     signUp: { // the sign up style
         alignItems: 'center',

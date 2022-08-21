@@ -5,6 +5,8 @@ import BackIcon from 'react-native-vector-icons/Ionicons';
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import * as firebaseFunctions from '../constants/firebaseauth';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -12,9 +14,12 @@ interface Props {
     navigation: any;
 }
 
+const bcrypt = require('bcryptjs');
+
 const SignUp : FC<Props> = (props) => {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const screenState = useSelector((state: RootState) => state.user); // get the states from redux
 
     const [name, setName] = useState<string | null>(null);
     const [email, setEmail] = useState<string | null>(null);
@@ -22,15 +27,25 @@ const SignUp : FC<Props> = (props) => {
     const [repeatPassword, setRepeatPassword] = useState<string | null>(null);
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
 
+    // hash a password
+    const hashThePassword = () => {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(password, salt);
+        return hash;
+    }
+
     // sign up new user
     const signup = async () => {
         if(name && email && password && repeatPassword && phoneNumber) {
             if((password === repeatPassword) && (phoneNumber.length == 10)) {
                 props.navigation.navigate('appLoader');
-                const result = await firebaseFunctions.signUp(name, email, password, phoneNumber)
+                const result = await firebaseFunctions.signUp(name, email, password, phoneNumber);
                 if (result) {
                     {dispatch(useActions.setLogedIn())};
                     {dispatch(useActions.updateName(name))};
+                    if (screenState.admin) {
+                        {dispatch(useActions.setAdmin())};
+                    }
                     props.navigation.navigate('home');
                 } else {
                     {dispatch(useActions.setLoader())}

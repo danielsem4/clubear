@@ -12,6 +12,7 @@ import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import {LinearGradient} from 'expo-linear-gradient';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import * as firebaseFunctions from '../constants/firebaseauth';
 
 
 const {height, width} = Dimensions.get('screen'); // the screen Dimensions
@@ -21,7 +22,7 @@ interface Props { // the home screen title, navigation opption
     title: string;
 }
 
-interface Club {
+interface Club { // the club info structre
     name: string;
     url:string;
     city: string;
@@ -65,7 +66,7 @@ const Home : FC<Props> = (props) => {
         get_clubs();
     }, [])
 
-    
+    // search club function
     const searchFilter = (text: string) => {
         if (text) {
             const FilterdData = clubs.filter((item) => {
@@ -89,11 +90,13 @@ const Home : FC<Props> = (props) => {
         }
     }
 
+    // handle log out
     const logout = () => {
         Alert.alert("loged out ")
         dispatch(useActions.setLogedIn())
     }
 
+    // handle the bar open and close
     const barsHandler = () => {
         Animated.timing(scaleValue, {
             toValue: showMenu ? 1 : 0.9,
@@ -116,6 +119,7 @@ const Home : FC<Props> = (props) => {
         setShowMenu(!showMenu);
     }
 
+    // the bear pic on the top of the home screen
     const HomeHeader = () => {
         return(
             <View style={style.homeHeaderContainer}>
@@ -156,7 +160,7 @@ const Home : FC<Props> = (props) => {
                     </View>
                     :
                     <View style={style.welcomeContainer}>
-                        <Text style={style.wolcomeTextStyle}>Welcome dear {screenState.user} lets have a party tonight</Text>
+                        <Text style={style.wolcomeTextStyle}>Welcome party man lets hang out tonight</Text>
                     </View>
                     }   
                     <View style={style.navigationButtonWrapper}>

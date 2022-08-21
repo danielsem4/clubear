@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Image, KeyboardAvoidingView, } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, } from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import CardBrand from 'react-native-vector-icons/Fontisto';
@@ -16,7 +16,7 @@ const {height, width} = Dimensions.get('screen');
 
 const Order : FC = () => {
     
-    const [creditCardInput, setCreditCardInput] = useState(false);
+    const [creditCardInput, setCreditCardInput] = useState(false); 
     const [cardNumber, setCardNumber] = useState("4580 0000 0000 0000");
     const [cardHloderName, setCardHloderName] = useState("Israel Israeli");
     const [cardHloderId, setCardHloderId] = useState("123456789");
@@ -29,33 +29,39 @@ const Order : FC = () => {
     const [orderStage, setOrderStage] = useState(0);
 
     const describe = [
-     "You will neet to enter the number of people coming to the club",
+     "You need to enter the number of the people who are coming to the club",
      "Enter your Id and the drink amount the addition on us (;"
     ]
 
+    // handle the screen that is shown on every stage in the order
     const next = () => {
         if (orderStage < 1)
             setOrderStage(orderStage + 1);
     }
 
+    // add male
     const addMale = () => {
         setMaleAmount(maleAmount + 1);
     }
 
+    // add female
     const addFemale = () => {
         setFemaleAmount(femaleAmount + 1);
     }
 
+    // substruct male
     const reduceMale = () => {
         if (maleAmount > 0)
             setMaleAmount(maleAmount - 1);
     }
 
+    // substruct female
     const reduceFemale = () => {
         if (femaleAmount > 0)
             setFemaleAmount(femaleAmount - 1);
     }
 
+    // display the card brand by the card number
     const selectCardBrend = () => { ///
         if (cardNumber[0] === '4') {
             return <CardBrand name='visa' size={36} color='white' />
@@ -71,6 +77,7 @@ const Order : FC = () => {
 
     }
 
+    // box where you add and substruct amont of people on stage 0 of the order
     const peoplEamount = (sex: string) => {
         return(
             <View>
@@ -95,9 +102,6 @@ const Order : FC = () => {
                 <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
                         <BackIcon name="arrow-back" size={40} style={style.backIcon} onPress={() => orderStage > 0 ? setOrderStage(orderStage - 1) : navigation.goBack()}/>
-                        <TouchableOpacity onPress={() => (maleAmount + femaleAmount >= 6 && maleAmount <= femaleAmount) ? next() :  Alert.alert("You need at list 6 persons and the male amount cant be higer the female amount")}>
-                            <Text style={{color: 'white', fontSize: 26, marginTop: '28%', marginRight: '2%'}}> Next </Text>
-                        </TouchableOpacity>
                     </View>
                 </LinearGradient>
                 <View style={style.describe}>
@@ -114,6 +118,11 @@ const Order : FC = () => {
                         <Text style={style.peopleSex}> Total Females </Text>
                         {peoplEamount("female")}
                     </View>
+                    <TouchableOpacity style={{alignSelf: 'center'}}
+                      onPress={() => (maleAmount + femaleAmount >= 6 && maleAmount <= femaleAmount) ? next()
+                      : Alert.alert("You need at list 6 persons and the male amount cant be higer the female amount")}>
+                        <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
+                    </TouchableOpacity>
                 </View>
                 :
                 <View style={{flex: 1, justifyContent: 'center', }}>
@@ -121,24 +130,26 @@ const Order : FC = () => {
                         
                     </View>
                     <View style={style.paymentMethodWrapper}>
-                        <View style={style.creditCardWrapper}>
-                            <View style={{marginTop: '5%'}}> 
-                                <Chip name='integrated-circuit-chip' size={30} color='#ffd700' />
-                                <Text style={style.cardNumber}>{cardNumber}</Text>
+                        <TouchableOpacity style={{width: '93%', alignItems: 'center'}} onPress={Keyboard.dismiss}>
+                            <View style={style.creditCardWrapper}>
+                                <View style={{marginTop: '5%', marginRight: '5%'}}> 
+                                    <Chip name='integrated-circuit-chip' size={30} color='#ffd700' />
+                                    <Text style={style.cardNumber}>{cardNumber}</Text>
+                                </View>
+                                <Text style={style.cardExpiration}>{expiration}</Text>
+                                <View style={{flexDirection: 'row', marginLeft: '2%'}}>
+                                    <Text style={style.cardHolderName}>{cardHloderName}</Text>
+                                    {selectCardBrend()}
+                                </View>
                             </View>
-                            <Text style={style.cardExpiration}>{expiration}</Text>
-                            <View style={{flexDirection: 'row'}}>
-                                <Text style={style.cardHolderName}>{cardHloderName}</Text>
-                                {selectCardBrend()}
-                            </View>
-                        </View>
-                        <View>
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Holder Name' iconName='user' onChangeText={() => console.log(1)} />
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Number' iconName='creditcard' onChangeText={() => console.log(1)} />
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Your ID' iconName='idcard' onChangeText={() => console.log(1)} />
+                        </TouchableOpacity>
+                        <View style={{marginTop: '10%'}}>
+                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Holder Name' iconName='user' onChangeText={(text) => setCardHloderName(text)} />
+                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Number' iconName='creditcard' onChangeText={(text) => setCardNumber(text)} />
+                            <Input shortInput={false} blurOnSubmit={false} placeholder='Your ID' iconName='idcard' onChangeText={(text) => setCardHloderId(text)} />
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                <Input shortInput={true} blurOnSubmit={false} placeholder='expire Date' iconName='calendar' onChangeText={() => console.log(1)} />
-                                <Input shortInput={true} blurOnSubmit={false} placeholder='cvv' iconName='lock' onChangeText={() => console.log(1)} />
+                                <Input shortInput={true} blurOnSubmit={false} placeholder=' MM/YY' iconName='calendar' onChangeText={(text) => setExpiration(text)} />
+                                <Input shortInput={true} blurOnSubmit={false} placeholder='cvv' iconName='lock' onChangeText={(text) => setCvv(text)} />
                             </View>
                             <View style={{justifyContent: 'center', alignItems: 'center'}}>
                                 <Button color="#00004d" title="Check Out" onPress={() => {}} />
@@ -188,7 +199,7 @@ const style = StyleSheet.create({
         width: '90%',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '10%',
+        marginTop: '5%',
         alignSelf: 'center'
     },
     describeText: { // the describe text style
@@ -200,8 +211,8 @@ const style = StyleSheet.create({
     peopleAmountContainer: { // people amount buttons wrapper
         flexDirection: 'column',
         justifyContent: 'space-evenly',
-        height: '30%',
-        marginTop: '20%'
+        height: '50%',
+        marginTop: '10%',
     },
     peopleAmountBox: { // people amount button wrapper
         flexDirection: 'row',
@@ -236,7 +247,7 @@ const style = StyleSheet.create({
     },
     creditCardWrapper: {
         height: 200,
-        width: '90%',
+        width: '100%',
         borderRadius: 14,
         alignItems: 'center',
         shadowColor: '#000',

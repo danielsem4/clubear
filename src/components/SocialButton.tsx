@@ -30,8 +30,8 @@ const style = StyleSheet.create({
         height: height / 17.5,
         borderRadius: 14,
         width: '12%',
-        marginRight: '15%',
-        marginLeft: '15%'
+        marginRight: '6%',
+        marginLeft: '6%'
     },
     iconWrapper: {
         width: 20,

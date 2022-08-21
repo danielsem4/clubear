@@ -12,12 +12,14 @@ import { useActions } from "../redux/reducers";
 
 const {height, width} = Dimensions.get('screen');
 
+interface Props {
+    navigation: any;
+}
 
 
-const Settings : FC = () => {
+const Settings : FC<Props> = (props) => {
 
-    const dispatch = useDispatch()
-
+    const dispatch = useDispatch();
     const screenState = useSelector((state: RootState) => state.user);  
 
     const logout = () => {
@@ -32,7 +34,9 @@ const Settings : FC = () => {
         if (text === 'Language') {
             dispatch(useActions.setLanguage());
         } else {
-
+            if (screenState.logedIn) {
+                props.navigation.navigate('forgotPassword');
+            }
         }
     }
 

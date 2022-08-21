@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, KeyboardAvoidingView, Keyboard } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import ButtonIcon from 'react-native-vector-icons/MaterialIcons';
 import { Input } from '../components';
@@ -9,9 +9,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import firebase from 'firebase/compat/app';
 import * as ImagePicker from 'expo-image-picker';
 import * as firebaseFunctions from '../constants/firebaseauth';
+
 
 const {height, width} = Dimensions.get('screen');
 
@@ -21,12 +21,15 @@ interface Props {
 
 const Admin : FC<Props> = (props) => {
 
-    const todoRef = firebase.firestore().collection('clubs');
+    // const dispatch = useDispatch()
 
-    const [hasGalleryPermission, setHasGalleryPermission] = useState(false);
-    const [pictureUploaded, setPictureUploaded] = useState(false);
+    // const screenState = useSelector((state: RootState) => state.user); 
 
-    const [image, setImage] = useState<null | string>(null);
+    const [pictureUploaded, setPictureUploaded] = useState(false); // state that tells me if the new club image uploaded 
+
+    const [image, setImage] = useState<null | string>(null); // the image url i got from the phone
+
+    const [email, setEmail] = useState<string>(''); // the user email
 
     const [action, setAction] = useState(0); // what action the admin want to do 
     const [clubName, setClubName] = useState<string>(''); // the club name
@@ -39,6 +42,39 @@ const Admin : FC<Props> = (props) => {
     const [longitude, setLongitude] = useState<string>('34.74079');
     const [url, setUrl] = useState<string>('');
 
+    // delete club from the firestore
+    const deleteClub = async () => {
+        const checkIfClubNameValid = await firebaseFunctions.checkIfTheClubExist(clubName);
+        if (checkIfClubNameValid) {
+            const result = await firebaseFunctions.deleteClub(clubName);
+            if (!result)  { // the club did not deleted
+                Alert.alert("Error removing club");
+            } else {
+                Alert.alert("club deleted successfully");
+                setAction(0);
+            }
+        } else {
+            Alert.alert("the club does not exist try again");
+        }
+    }
+
+    // delete user from firestore
+    const deleteUser = async () => {
+        const checkIfClubNameValid = await firebaseFunctions.checkIfTheUserExist(email);
+        if (checkIfClubNameValid) {
+            const result = await firebaseFunctions.deleteUser(email);
+            if (!result)  { // the club did not deleted
+                Alert.alert("Error removing club");
+            } else {
+                Alert.alert("User deleted successfully");
+                setAction(0);
+            }
+        } else {
+            Alert.alert("the user email does not exist");
+        } 
+    }
+
+    // pick image from the phone
     const pickImage = async () => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (permission.granted === false) {
@@ -62,6 +98,7 @@ const Admin : FC<Props> = (props) => {
         }
     };
 
+    // upload picture to the storage
     const uploadClubPicture = async () => {
         if (image !== null && clubName !== '') {
             await firebaseFunctions.uploadImage(image, clubName);
@@ -76,21 +113,24 @@ const Admin : FC<Props> = (props) => {
         }
     }
 
-
+    // upload the club to the firestore
     const addClub = async () => {
         const result = await firebaseFunctions.addNewClub(clubName, city, age, musicType, openingTime, about, latitude, longitude, url)
         if (!result) {
             Alert.alert('missing fields');
+        } else {
+            Alert.alert('Club added');
+            setAction(0);
         }
     }
 
-    const dispatch = useDispatch()
-
-    const screenState = useSelector((state: RootState) => state.user); 
+    // update the club info
+    
 
     const updateFields = () => {
         switch (action) {
-            case 0:
+            // the home screen 
+            case 0: 
                 return(
                     <View style={style.buttonsWrapper}>
                         <View style={style.actionButtonsContainer}>
@@ -102,19 +142,26 @@ const Admin : FC<Props> = (props) => {
                                 <ButtonIcon name='nightlife' size={60} style={style.iconStyle}/>
                                 <Text style={{fontSize: 18, color: 'white',}}>Edit club</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={style.actionButtonsWrapper} onPress={() => {setAction(2)}}>
+                        </View>
+                        <View style={style.actionButtonsContainer}>
+                            <TouchableOpacity style={style.actionButtonsWrapper} onPress={() => {setAction(3)}}>
                                 <ButtonIcon name='nightlife' size={60} style={style.iconStyle}/>
                                 <Text style={{fontSize: 18, color: 'white',}}>Remove club</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={style.actionButtonsWrapper} onPress={() => {setAction(4)}}>
+                                <ButtonIcon name='account-circle' size={60} style={style.iconStyle}/>
+                                <Text style={{fontSize: 18, color: 'white',}}>Remove user</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 );
+            // the add club screens     
             case 1:
                 if (pictureUploaded) {
                 return(
                     <View style={style.inputContainer}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
-                        <Input shortInput={true} placeholder='City*' iconName='enviromento' onChangeText={(text) => setCity(text)} />
+                            <Input shortInput={true} placeholder='City*' iconName='enviromento' onChangeText={(text) => setCity(text)} />
                             <Input shortInput={true} placeholder='Age limit*' iconName='team' onChangeText={(text) => setAge(text)} />
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
@@ -125,7 +172,7 @@ const Admin : FC<Props> = (props) => {
                         <Input shortInput={false} placeholder='Opening time*' iconName='hourglass' onChangeText={(text) => setOpeningTime(text)} />
                         <Input shortInput={false} placeholder='about*' iconName='infocirlceo' onChangeText={(text) => setAbout(text)} />
                         <View style={{flexDirection: 'row-reverse', justifyContent: 'space-between', width: '80%'}}>
-                        <TouchableOpacity  onPress={() => addClub()}>
+                            <TouchableOpacity  onPress={() => addClub()}>
                                 <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => {}}>
@@ -133,12 +180,12 @@ const Admin : FC<Props> = (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                );} else {
+                );} else { // the picture does not added yet.
                     return (
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                        <View style={{marginBottom: '10%', marginTop: '5%'}}>
+                        <TouchableOpacity style={{marginBottom: '10%', marginTop: '5%'}} onPress={Keyboard.dismiss}>
                             <Text style={{fontSize: 26, color: 'white', textAlign: 'center'}}>First set the club name and upload the club image and then enter the club details with the image url from firebase</Text>
-                        </View>
+                        </TouchableOpacity>
                         <View style={{marginBottom: '30%',}}>
                             <Input shortInput={false} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
                         </View>
@@ -154,30 +201,67 @@ const Admin : FC<Props> = (props) => {
                         </View>
                     </View>
                 );}
+            // the edit club screen    
             case 2:
                 return(
-                    <View style={{}}>
-                        <Text> update </Text>
+                    <View>
+
                     </View>
+            );
+            // the remove club screen
+            case 3: 
+            return(
+                <View style={{alignItems: 'center'}}>
+                    <Text style={{fontSize: 26, color: 'white', textAlign: 'center', marginTop: '5%'}}> enter the club name that you want to delete </Text>
+                    <View style={{marginTop: '5%'}}>
+                        <Input shortInput={false} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
+                    </View>
+                    <TouchableOpacity style={{marginTop: '5%'}} onPress={() => deleteClub()}>
+                        <Text style={{color: 'white', fontSize: 26}}>Delete</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{flex: 1}} onPress={Keyboard.dismiss}>
+                        <View style={{flex: 1, width}}>
+                            
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            );
+            // the remove user screen
+            case 4: 
+                return(
+                    <View style={{alignItems: 'center'}}>
+                        <Text style={{fontSize: 26, color: 'white', textAlign: 'center', marginTop: '5%'}}> enter the user email that you want to delete </Text>
+                        <View style={{marginTop: '5%'}}>
+                            <Input shortInput={false} placeholder='User Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
+                        </View>
+                        <TouchableOpacity style={{marginTop: '5%'}} onPress={() => deleteUser()}>
+                            <Text style={{color: 'white', fontSize: 26}}>Delete</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{flex: 1}} onPress={Keyboard.dismiss}> 
+                            <View style={{flex: 1, width}}>
+                                
+                            </View>
+                        </TouchableOpacity>
+                </View>
             );
         }
     }
     
     return(
-        <KeyboardAvoidingView style={style.container} behavior='height'>
-            <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
-                    <TouchableOpacity style={style.logoutStyle} onPress={() => props.navigation.navigate("home")}>
-                        <Text style={{fontSize: 22, color: 'white'}}> Back </Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={{alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => {setAction(0); setPictureUploaded(!pictureUploaded);}}>
-                        <Text style={{fontSize: 24, color: 'white'}}> Welcome Back </Text>
-                    </TouchableOpacity>
-                    <Icons name={'search'} size={30} style={style.searchButtonStyle} onPress={() => {}} />
-                </LinearGradient>
-                {updateFields()}
-            </ImageBackground>
-        </KeyboardAvoidingView>
+        <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
+            <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <TouchableOpacity style={style.logoutStyle} onPress={() => {action === 0 ? props.navigation.navigate("home") : setAction(0)}}>
+                    <Text style={{fontSize: 22, color: 'white'}}> Back </Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => {setAction(0); setPictureUploaded(!pictureUploaded);}}>
+                    <Text style={{fontSize: 24, color: 'white'}}> Welcome Back </Text>
+                </TouchableOpacity>
+                <View style={{marginLeft: '10%'}}>
+
+                </View>
+            </LinearGradient>
+            {updateFields()}
+        </ImageBackground>
     )
 
 }
@@ -207,7 +291,8 @@ const style = StyleSheet.create({
         alignContent: 'center',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '20%'
+        marginTop: '20%',
+        marginRight: '2%'
     },
     searchButtonStyle: { // the search icon
         flexDirection: 'row',
@@ -222,7 +307,7 @@ const style = StyleSheet.create({
     actionButtonsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginTop: '10%'
+        marginTop: '30%'
     },
     actionButtonsWrapper: {
         justifyContent: 'center',
