@@ -26,7 +26,6 @@ const Settings : FC<Props> = (props) => {
         if (screenState.logedIn) {
             navigation.goBack();
             dispatch(useActions.setLogedIn());
-            console.log(screenState.logedIn);
         }
     }
 

@@ -8,7 +8,7 @@ import firebaseConfig from './firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
 import { useState } from 'react';
 
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 
 interface Club { // the club info structre
     name: string;
@@ -66,7 +66,6 @@ export const login = async (email: string, password: string) => {
     try {
         const {user} = await firebase.auth().signInWithEmailAndPassword(email, password);
         if ({user}) {
-            console.log('true');
             return true;
         } else {
             return false;
@@ -91,13 +90,19 @@ export const signUp = async (name: string, email: string, password: string, phon
 
 // image upload function
 export const uploadImage  = async (url: string, clubName: string) => {  
-
+    console.log('here 1');
     const storage = getStorage();
+
+    console.log('here 2');
     const reffernce = ref(storage, `home_image/${clubName}_main.png`);
 
+    console.log('here 3');
     const image = await fetch(url);
+
+    console.log('here 4');
     const bytes = await image.blob();
 
+    console.log('here 5');
     await uploadBytes(reffernce, bytes);
 }
 
@@ -163,7 +168,7 @@ export const getUserIdByEmail = async (email: string) => {
     await getUserByUserEmail(email).then( async (value) => {
         id = value.docs[0].id;
       });
-      console.log(id);
+      
       return id;
 }
 
@@ -174,13 +179,19 @@ export const getClubByName = async (clubName: string) => {
         .get();
 }
 
+// get club data by name
+export const getClubDataByName = async (clubName: string) => {
+    const snapshot = await clubs.where('name', '==', clubName).get();
+    return (snapshot.docs[0].data() as unknown) as Club;
+}
+
 // get club id by the club name
 export const getClubIdByName = async (clubName: string) => {
     let id = '';
     await getClubByName(clubName).then( async (value) => {
         id = value.docs[0].id;
       });
-      console.log(id);
+      
       return id;
 }
 
@@ -208,11 +219,21 @@ export const deleteUser = async (email: string) => {
     return result;
 }
 
-// edit club by name                                               to do
-export const updateClub = async (clubName: string) => {
-    let result = false;
+// edit club by name                                               
+export const updateClub = async (clubName: string, city: string, age: string, musicType: string, openingTime: string, about: string, latitude: string, longitude: string, url: string) => {
+    const theLatitude: number = Number(latitude);
+    const theLongitude: number = Number(longitude);  
     await clubs.doc(await getClubIdByName(clubName)).update({
-        
-    })
+        about: about,
+        age: age,
+        city: city,
+        name: clubName,
+        musicType: musicType,
+        openingTime: openingTime,
+        mapCoordinates: {
+            latitude: theLatitude,
+            longitude: theLongitude
+        },
+    });
 }
 

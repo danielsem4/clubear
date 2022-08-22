@@ -128,16 +128,16 @@ const Home : FC<Props> = (props) => {
                         <Text style={style.motoTextStyle}>Trying to find </Text>
                         <Text style={style.motoTextStyle}>a party tonight ?</Text>
                         <Text style={style.motoTextStyle}>Look no further</Text>
-                    </View>
-                    {screenState.admin ? 
-                    <View style={{marginLeft: '10%', marginTop: '15%'}}>
-                        <Icons name= 'pencil' size= {40} color= 'white' onPress={() => props.navigation.navigate('admin')} />
-                    </View>
-                    :
-                    <View>
+                        {screenState.admin ? 
+                        <View style={{marginLeft: '5%', marginTop: '5%'}}>
+                            <Icons name= 'pencil' size= {42} color= 'white' onPress={() => props.navigation.navigate('admin')} />
+                        </View>
+                        :
+                        <View>
 
-                    </View>    
-                }
+                        </View>    
+                        }
+                    </View>
                 </ImageBackground>
             </View>
         )
@@ -270,6 +270,7 @@ const style = StyleSheet.create({
     topHomeBear: { // the bear photo on the top of the screen
         height: height / 2.55,
         width,
+        display: 'flex'
     },
     topBarStyle: {  // the top navbar container 
         borderWidth: 0.4,

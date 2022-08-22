@@ -6,9 +6,6 @@ import { Input } from '../components';
 import 'firebase/compat/auth';
 import {LinearGradient} from 'expo-linear-gradient';
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
 import * as ImagePicker from 'expo-image-picker';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
@@ -21,15 +18,13 @@ interface Props {
 
 const Admin : FC<Props> = (props) => {
 
-    // const dispatch = useDispatch()
-
-    // const screenState = useSelector((state: RootState) => state.user); 
-
     const [pictureUploaded, setPictureUploaded] = useState(false); // state that tells me if the new club image uploaded 
 
     const [image, setImage] = useState<null | string>(null); // the image url i got from the phone
 
     const [email, setEmail] = useState<string>(''); // the user email
+
+    const [editClubStage, setEditClubStage] = useState<number>(0); // club info edit stages 
 
     const [action, setAction] = useState(0); // what action the admin want to do 
     const [clubName, setClubName] = useState<string>(''); // the club name
@@ -38,10 +33,11 @@ const Admin : FC<Props> = (props) => {
     const [musicType, setMusicType] = useState<string>(''); // music type
     const [openingTime, setOpeningTime] = useState<string>(''); // club opening time
     const [about, setAbout] = useState<string>(''); // the club info 
-    const [latitude, setLatitude] = useState<string>('32.02263');
-    const [longitude, setLongitude] = useState<string>('34.74079');
+    const [latitude, setLatitude] = useState<string>('32.02263'); // map coord
+    const [longitude, setLongitude] = useState<string>('34.74079'); // map coord
     const [url, setUrl] = useState<string>('');
 
+    
     // delete club from the firestore
     const deleteClub = async () => {
         const checkIfClubNameValid = await firebaseFunctions.checkIfTheClubExist(clubName);
@@ -80,14 +76,13 @@ const Admin : FC<Props> = (props) => {
         if (permission.granted === false) {
             Alert.alert('You did not accept access to internal storage');
         } else {
-            console.log(permission);
+            
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 allowsEditing: true,
                 aspect: [4, 3],
                 quality: 1,
             });
-            console.log(result);
                 if (!result.cancelled) {
                     const imageToUploadUri = result.uri;
                     setImage(imageToUploadUri);
@@ -100,22 +95,23 @@ const Admin : FC<Props> = (props) => {
 
     // upload picture to the storage
     const uploadClubPicture = async () => {
+        props.navigation.navigate('appLoader');
         if (image !== null && clubName !== '') {
             await firebaseFunctions.uploadImage(image, clubName);
-            console.log("suc");
-            setPictureUploaded(!pictureUploaded);
+            setPictureUploaded(true);
             const picUrl = await firebaseFunctions.getImageUrl(clubName);
-            console.log(picUrl);
             setUrl(picUrl);
+            props.navigation.navigate('admin');
         }
         else {
+            props.navigation.navigate('admin');
             Alert.alert('pls select picture or give the club name');
         }
     }
 
     // upload the club to the firestore
     const addClub = async () => {
-        const result = await firebaseFunctions.addNewClub(clubName, city, age, musicType, openingTime, about, latitude, longitude, url)
+        const result = await firebaseFunctions.addNewClub(clubName, city, age, musicType, openingTime, about, latitude, longitude, url);
         if (!result) {
             Alert.alert('missing fields');
         } else {
@@ -124,9 +120,54 @@ const Admin : FC<Props> = (props) => {
         }
     }
 
-    // update the club info
-    
+    // edit the club info
+    const editClub = async () => {
+        props.navigation.navigate('appLoader');
+        const checkIfClubNameValid = await firebaseFunctions.checkIfTheClubExist(clubName);
+        if (checkIfClubNameValid) {
+            props.navigation.navigate('admin');
+            const club = await firebaseFunctions.getClubDataByName(clubName);
+            setAge(club.age);
+            setCity(club.city);
+            setClubName(club.name);
+            setLatitude(String(club.mapCoordinates.latitude));
+            setLongitude(String(club.mapCoordinates.longitude)); 
+            setMusicType(club.musicType);
+            setOpeningTime(club.openingTime);
+            setAbout(club.about);
+            setEditClubStage(1);
+        } else {
+            props.navigation.navigate('admin');
+            Alert.alert("the club does not exist try again");
+            setEditClubStage(0);
+        }
+    }
 
+    // update the club info
+    const updateClub = async() => {
+        await firebaseFunctions.updateClub(clubName, city, age, musicType, openingTime, about, latitude, longitude, url);
+        Alert.alert('club updated');
+        setAction(0);
+        setEditClubStage(0);
+    }
+
+    // the 2 buttons that handle picture upload
+    const pictureUploadUi = () => {
+        return (
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Icons name='image' size={70} color="white" onPress={() => pickImage()} />
+                    <Text style={{fontSize: 18, color: 'white',}}>select club image</Text>
+                </View>
+                <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                    <Icons name='upload' size={70} color="white" onPress={() => uploadClubPicture()} />
+                    <Text style={{fontSize: 18, color: 'white',}}>upload club image</Text>
+                </View>
+            </View>
+        );
+    }
+
+    // update the club new info
     const updateFields = () => {
         switch (action) {
             // the home screen 
@@ -189,23 +230,54 @@ const Admin : FC<Props> = (props) => {
                         <View style={{marginBottom: '30%',}}>
                             <Input shortInput={false} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
                         </View>
-                        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
-                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                <Icons name='image' size={70} color="white" onPress={() => pickImage()} />
-                                <Text style={{fontSize: 18, color: 'white',}}>select club image</Text>
-                            </View>
-                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                <Icons name='upload' size={70} color="white" onPress={() => uploadClubPicture()} />
-                                <Text style={{fontSize: 18, color: 'white',}}>upload club image</Text>
-                            </View>
-                        </View>
+                        {pictureUploadUi()}
                     </View>
                 );}
             // the edit club screen    
             case 2:
                 return(
                     <View>
-
+                        {editClubStage === 0 ?
+                        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                            <TouchableOpacity style={{marginBottom: '10%', marginTop: '5%'}} onPress={Keyboard.dismiss}>
+                                <Text style={{fontSize: 26, color: 'white', textAlign: 'center'}}>First enter the club name that you want to edit</Text>
+                            </TouchableOpacity>
+                            <View style={{marginBottom: '2%',}}>
+                                <Input shortInput={false} placeholder='Club Name*' iconName='staro' onChangeText={(text) => setClubName(text)} />
+                            </View>
+                            <TouchableOpacity style={{marginBottom: '10%'}}  onPress={() => editClub()}>
+                                <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
+                            </TouchableOpacity>
+                            <Text style={{fontSize: 26, color: 'white', textAlign: 'center', marginBottom: '10%'}}>If you want to change the picture update here</Text>
+                            {pictureUploadUi()}
+                        </View>
+                        :
+                        <View style={{alignItems: 'center'}}>
+                            <View>
+                                <Text style={{marginTop: '4%', marginBottom: '3%', fontSize: 22, color: 'white', textAlign: 'center'}}>Pls enter the the new info you want to change </Text>    
+                            </View>
+                            <Input shortInput={false} placeholder={clubName} iconName='infocirlceo' onChangeText={(text) => setAbout(text)} />
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
+                                <Input shortInput={true} placeholder={city} iconName='enviromento' onChangeText={(text) => setCity(text)} />
+                                <Input shortInput={true} placeholder={age} iconName='team' onChangeText={(text) => setAge(text)} />
+                            </View>
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '90%'}}>
+                                <Input shortInput={true} placeholder={latitude} iconName='pushpino' onChangeText={(num) => setLatitude(num)} />
+                                <Input shortInput={true} placeholder={longitude} iconName='pushpino' onChangeText={(num) => setLongitude(num)} />
+                            </View>
+                            <Input shortInput={false} placeholder={musicType} iconName='sound' onChangeText={(text) => setMusicType(text)} />
+                            <Input shortInput={false} placeholder={openingTime} iconName='hourglass' onChangeText={(text) => setOpeningTime(text)} />
+                            <Input shortInput={false} placeholder={about} iconName='infocirlceo' onChangeText={(text) => setAbout(text)} />
+                            <View style={{flexDirection: 'row-reverse', justifyContent: 'space-between', width: '80%'}}>
+                                <TouchableOpacity  onPress={() => updateClub()}>
+                                    <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => setEditClubStage(0)}>
+                                    <Text style={{color: 'white', fontSize: 26}}>back</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    }
                     </View>
             );
             // the remove club screen
@@ -253,7 +325,7 @@ const Admin : FC<Props> = (props) => {
                 <TouchableOpacity style={style.logoutStyle} onPress={() => {action === 0 ? props.navigation.navigate("home") : setAction(0)}}>
                     <Text style={{fontSize: 22, color: 'white'}}> Back </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => {setAction(0); setPictureUploaded(!pictureUploaded);}}>
+                <TouchableOpacity style={{alignItems: 'center', marginTop: '12%', marginRight: '5%'}} onPress={() => {setAction(0); setPictureUploaded(false); setEditClubStage(0);}}>
                     <Text style={{fontSize: 24, color: 'white'}}> Welcome Back </Text>
                 </TouchableOpacity>
                 <View style={{marginLeft: '10%'}}>
@@ -304,20 +376,20 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         marginBottom: '5%'
     },
-    actionButtonsContainer: {
+    actionButtonsContainer: {  
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: '30%'
     },
-    actionButtonsWrapper: {
+    actionButtonsWrapper: { // home screen buttons wrapper
         justifyContent: 'center',
         alignContent: 'center',
         alignItems: 'center',    
     },
-    iconStyle: {
+    iconStyle: { // home screen buttons 
         color: 'white'
     },
-    inputContainer: {
+    inputContainer: { // the new club input wrapper
         display: 'flex',
         flex: 1,
         flexDirection: 'column',

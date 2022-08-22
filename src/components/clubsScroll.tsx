@@ -51,7 +51,7 @@ const ClubsScroll : FC<Props> = (props) => {
                     renderItem={({item}) => {
                         return(
                             <View style={style.flatListImageContainer}>
-                                <TouchableOpacity style={style.flatListBottunContainer} onPress={() => {console.log(item); props.navigation.navigate('clubInfo', {theClub: item});}}>
+                                <TouchableOpacity style={style.flatListBottunContainer} onPress={() => props.navigation.navigate('clubInfo', {theClub: item})}>
                                     <Image style={style.flatListImageStyle} source={{uri: item.url}} />
                                     <Text style={[style.flatListClubNameStyle, {marginLeft: '2.5%'}]}>{item.name}</Text>
                                     <Text style={[style.flatListClubNameStyle, {fontSize: 14}]}> <Icons name={'map-marker'} style={style.iconStyle} /> {item.city}</Text>

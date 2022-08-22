@@ -13,7 +13,8 @@ interface Props {
     onChangeText: (text: string) => void;
     secureTextEntry?: boolean;
     searchInput?: boolean;
-    shortInput: boolean
+    shortInput: boolean;
+    defaultValue?: string;
 }
 
 const Input : FC<Props> = (props) => {
@@ -30,7 +31,7 @@ const Input : FC<Props> = (props) => {
             <View style={styles.shortIconStyle}>
                 <AntDesign name={props.iconName} size={24} />
             </View>
-            <TextInput blurOnSubmit={props.blurOnSubmit} style={styles.input} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
+            <TextInput defaultValue={props.defaultValue} blurOnSubmit={props.blurOnSubmit} style={styles.input} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
         </View>
     );
 }
