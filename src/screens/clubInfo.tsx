@@ -18,16 +18,18 @@ interface ClubsParameters {
     navigation: any;
     theClub: {
         name: string;
-        url:string;
+        imageUrl: string;
+        map_url: string;
+        menu_url: string;
         city: string;
         age: string;
         musicType: string;
         openingTime: string;
         about: string;
         mapCoordinates: {
-            latitude: number,
-            longitude: number
-    };
+            latitude: 32.05506,
+            longitude: 34.77488
+        };
     }
 }
 
@@ -50,6 +52,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     const club= route.params as ClubsParameters
     const screenState = useSelector((state: RootState) => state.user);  
     const navigation = useNavigation();
+    console.log(club.theClub['menu_url']);
 
     // navigate to order screen
     const tableOrder = () => {
@@ -75,9 +78,9 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                     <View />
                 </View>
             </LinearGradient>
-                <Image source={{uri: club.theClub['url']}} style={style.photo} />
+                <Image source={{uri: club.theClub['imageUrl']}} style={style.photo} />
                 <View style={style.clubInfoWrapper}>
-                <View style={style.clubInfoAndIconWrapper}>
+                    <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'info-circle'} style={style.iconStyle} />
                         <Text style={style.clubInfoTextContent}>{club.theClub['about']} </Text>
                     </View>
@@ -97,6 +100,10 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                         <Icons name={'id-card-o'} style={style.iconStyle} />
                         <Text style={style.clubInfoTextContent}>{club.theClub['age']}</Text>
                     </View>
+                    <TouchableOpacity style={style.clubInfoAndIconWrapper} onPress={() => props.navigation.navigate('menu', {menuUrl: club.theClub['menu_url']})}>
+                        <Icons name={'book'} style={style.iconStyle} />
+                        <Text style={style.clubInfoTextContent}>Menu</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{flex: 1}}>
                     <View style={style.contactButtonsContainer}>
@@ -166,7 +173,7 @@ const style = StyleSheet.create({
         marginTop: '0.5 %'
     },
     photo: { // the club picture
-        height: '25%',
+        height: '32%',
     },
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
@@ -174,8 +181,9 @@ const style = StyleSheet.create({
         height: height
     },
     clubInfoWrapper: {
-        flex: 1,
-        width: '90%'
+        width: '92%',
+        height: '30%',
+        marginBottom: '10%'
     },
     clubInfoAndIconWrapper: {
         flexDirection: 'row',

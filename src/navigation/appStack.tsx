@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import {Home, SignUp, Login, ClubInfo, About, Order, Settings, Admin, AppLoader, ForgotPassword } from '../screens';
+import {Home, SignUp, Login, ClubInfo, About, Order, Settings, Admin, AppLoader, ForgotPassword, Menu } from '../screens';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -18,6 +18,7 @@ const AppStack : FC = () => {
             <Screen name='forgotPassword' component={ForgotPassword} />
             <Screen name='signUp' component={SignUp} />
             <Screen name='order' component={Order} />
+            <Screen name='menu' component={Menu} />
             <Screen name='admin' component={Admin} />
             
         </Navigator>

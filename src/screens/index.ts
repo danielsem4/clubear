@@ -8,6 +8,7 @@ import AppLoader from "./appLoader";
 import Order from "./order";
 import Settings from "./settings";
 import Admin from "./admin";
+import Menu from "./menu";
 
 
-export {SignUp, Login, Home, About , ClubInfo, ForgotPassword ,AppLoader, Order, Settings, Admin}
+export {SignUp, Login, Home, About , ClubInfo, ForgotPassword ,AppLoader, Order, Settings, Admin, Menu }

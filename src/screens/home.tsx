@@ -24,7 +24,9 @@ interface Props { // the home screen title, navigation opption
 
 interface Club { // the club info structre
     name: string;
-    url:string;
+    imageUrl: string;
+    mapUrl: string;
+    menuUrl: string;
     city: string;
     age: string;
     musicType: string;

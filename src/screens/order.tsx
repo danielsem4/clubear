@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, } from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
+import Icons from 'react-native-vector-icons/FontAwesome';
 import CardBrand from 'react-native-vector-icons/Fontisto';
 import Chip from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +17,8 @@ const {height, width} = Dimensions.get('screen');
 
 const Order : FC = () => {
     
+    const navigation = useNavigation();
+
     const [creditCardInput, setCreditCardInput] = useState(false); 
     const [cardNumber, setCardNumber] = useState("4580 0000 0000 0000");
     const [cardHloderName, setCardHloderName] = useState("Israel Israeli");
@@ -80,21 +83,25 @@ const Order : FC = () => {
     // box where you add and substruct amont of people on stage 0 of the order
     const peoplEamount = (sex: string) => {
         return(
-            <View>
-                <View style={style.peopleAmountBox}>
-                    <TouchableOpacity onPress={sex === 'male' ? addMale : addFemale}>
-                        <Amount name="plus" size={40} style={style.addMinusIconContainer} />
-                    </TouchableOpacity>
-                    <Text style={style.peopleAmount}> {sex === 'male' ? maleAmount : femaleAmount}</Text>
-                    <TouchableOpacity onPress={sex === 'male' ? reduceMale : reduceFemale}>
-                        <Amount name="minus" size={40} style={style.addMinusIconContainer} />
-                    </TouchableOpacity>
-                </View>
-            </View>
+                <View >
+                    <View style={style.peopleAmountCard}>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                            <Icons name= {sex} size= {42} color= 'white' />
+                            <Text style={[{marginLeft: '2.5%', fontSize: 20, color: 'white'}]}>Total {sex}</Text>
+                            <View style={style.peopleAmountBox}>
+                                <TouchableOpacity onPress={sex === 'male' ? addMale : addFemale}>
+                                    <Amount name="plus" size={30} style={style.addMinusIconContainer} />
+                                </TouchableOpacity>
+                                <Text style={style.peopleAmount}> {sex === 'male' ? maleAmount : femaleAmount}</Text>
+                                <TouchableOpacity onPress={sex === 'male' ? reduceMale : reduceFemale}>
+                                    <Amount name="minus" size={30} style={style.addMinusIconContainer} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </ View>
         )
     }
-
-    const navigation = useNavigation();
 
     return(
         <KeyboardAvoidingView style={style.container} behavior='height'>
@@ -107,21 +114,18 @@ const Order : FC = () => {
                 <View style={style.describe}>
                     <Text style={style.describeText}>{describe[orderStage]}</Text>
                 </View>
-                
                 {orderStage === 0 ?
                 <View style={style.peopleAmountContainer}>
                     <View>
-                        <Text style={style.peopleSex}> Total Males </Text>
                         {peoplEamount("male")}
                     </View>
                     <View>
-                        <Text style={style.peopleSex}> Total Females </Text>
                         {peoplEamount("female")}
                     </View>
                     <TouchableOpacity style={{alignSelf: 'center'}}
                       onPress={() => (maleAmount + femaleAmount >= 6 && maleAmount <= femaleAmount) ? next()
                       : Alert.alert("You need at list 6 persons and the male amount cant be higer the female amount")}>
-                        <Text style={{color: 'white', fontSize: 26}}>submmit</Text>
+                        <Text style={{color: 'white', fontSize: 26}}>submit</Text>
                     </TouchableOpacity>
                 </View>
                 :
@@ -210,19 +214,34 @@ const style = StyleSheet.create({
     },
     peopleAmountContainer: { // people amount buttons wrapper
         flexDirection: 'column',
-        justifyContent: 'space-evenly',
         height: '50%',
-        marginTop: '10%',
+        marginTop: '5%',
+        backgroundColor: 'red'
+    },
+    peopleAmountCard: { // people amount button wrapper
+        width: '85%',
+        height: '55%',
+        borderRadius: 14,
+        alignItems: 'center',
+        marginTop: '3%',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 5,
+            height: 5
+        },
+        shadowOpacity: 0.75,
+        elevation: 15,
+        backgroundColor: '#333333',
+        alignSelf: 'center',
+        justifyContent: 'center'
     },
     peopleAmountBox: { // people amount button wrapper
         flexDirection: 'row',
-        width: '40%',
-        justifyContent: 'space-between',
-        borderRadius: 20,
-        borderWidth: 0.5,
+        width: '25%',
+        justifyContent: 'space-evenly',
         borderColor: 'white',
         alignItems: 'center',
-        marginLeft: '30%',
+        marginLeft: '30%'
     },
     addMinusIconContainer: { // add button style
         color: 'white',
@@ -230,7 +249,8 @@ const style = StyleSheet.create({
     peopleAmount:{ // people amount number style
         color: 'white',
         fontSize: 22,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginRight: '6%'
     },
     peopleSex: { // the gender text style
         color: 'white',
@@ -257,7 +277,7 @@ const style = StyleSheet.create({
         },
         shadowOpacity: 0.75,
         elevation: 15,
-        backgroundColor: '#00004d',
+        backgroundColor: 'black',
         marginTop: '10%'
     },
     cardNumber: { // card number text style

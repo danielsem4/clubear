@@ -2,25 +2,25 @@ import React, { FC } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import  ClubsScroll  from './clubsScroll';
 
-
 interface Props {
     navigation: any;
     clubLocation: string;
     clubList: {
-        name: string,
-        url: string,
-        city: string,
-        about: string,
-        age: string,
-        openingTime: string,
-        musicType: string,
+        name: string;
+        imageUrl: string;
+        mapUrl: string;
+        menuUrl: string;
+        city: string;
+        age: string;
+        musicType: string;
+        openingTime: string;
+        about: string;
         mapCoordinates: {
-            latitude: number,
-            longitude: number
-        }
+            latitude: 32.05506,
+            longitude: 34.77488
+        };
     }[];
 }
-
 
 const ClubsByCity : FC<Props> = (props) => {
 
@@ -32,9 +32,7 @@ const ClubsByCity : FC<Props> = (props) => {
     )
 }
 
-
 export default ClubsByCity;
-
 
 const style = StyleSheet.create({
     clubsContainer: {

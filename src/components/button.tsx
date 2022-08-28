@@ -1,12 +1,11 @@
 import React, { FC } from "react";
 import { Dimensions,Text ,View, StyleSheet, TouchableOpacity } from "react-native";
-import { TextInput } from "react-native-paper";
+import {LinearGradient} from 'expo-linear-gradient';
 
 // Button
 const {height, width} = Dimensions.get('screen');
 
 interface Props {
-    smallSize?: boolean;
     title: string;
     color?: string;
     onPress: () => void;
@@ -15,18 +14,18 @@ interface Props {
 // used smallSize to indicate if the button i need is small or big
 const Button : FC<Props> = (props) => {
     return(
-        <TouchableOpacity onPress={props.onPress}
-         style={props.smallSize ? [style.smallButtonContainer, {backgroundColor: props.color}] : [style.bigButtonContainer, {backgroundColor: props.color}]}>
-            <Text style={props.smallSize ? style.smallButtonText : style.bigButtonText}>{props.title}</Text>
-        </TouchableOpacity>
-    )
+        <LinearGradient colors={['#724997', '#3F1651']} style={style.bigButtonContainer} >
+            <TouchableOpacity onPress={props.onPress} style={style.bigButtonContainer}>
+                <Text style={style.bigButtonText}>{props.title}</Text>
+            </TouchableOpacity>
+        </LinearGradient>
+    );
 }
 
 export default Button;
 
 const style = StyleSheet.create({
     bigButtonContainer: {
-        backgroundColor: '#4a1b83',
         justifyContent: 'center',
         alignItems: 'center',
         height: height / 16,

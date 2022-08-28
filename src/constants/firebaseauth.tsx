@@ -6,7 +6,8 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import firebaseConfig from './firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import { useState } from 'react';
+import * as firebaseui from 'firebaseui'
+
 
 const app = firebase.initializeApp(firebaseConfig);
 
