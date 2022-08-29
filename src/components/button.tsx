@@ -7,14 +7,15 @@ const {height, width} = Dimensions.get('screen');
 
 interface Props {
     title: string;
-    color?: string;
+    color1: string;
+    color2: string;
     onPress: () => void;
 }
 
 // used smallSize to indicate if the button i need is small or big
 const Button : FC<Props> = (props) => {
     return(
-        <LinearGradient colors={['#724997', '#3F1651']} style={style.bigButtonContainer} >
+        <LinearGradient colors={[props.color1, props.color2]} style={style.bigButtonContainer} >
             <TouchableOpacity onPress={props.onPress} style={style.bigButtonContainer}>
                 <Text style={style.bigButtonText}>{props.title}</Text>
             </TouchableOpacity>

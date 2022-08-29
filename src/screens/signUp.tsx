@@ -79,7 +79,7 @@ const SignUp : FC<Props> = (props) => {
                             <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
                             <Input shortInput={false} placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
                             <Input shortInput={false} placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
-                            <Button color='#4a1b83' title='Sign up' onPress={signup} />
+                            <Button color1='#724997' color2='#3F1651' title='Sign up' onPress={signup} />
                         </View>
                 </View>
             </ImageBackground>

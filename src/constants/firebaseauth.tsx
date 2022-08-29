@@ -6,7 +6,7 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import firebaseConfig from './firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
-import * as firebaseui from 'firebaseui'
+
 
 
 const app = firebase.initializeApp(firebaseConfig);
@@ -32,9 +32,25 @@ interface User { // the user info structre
     password: string;
 }
 
-const users = firebase.firestore().collection('users');
-const clubs = firebase.firestore().collection('clubs');
+const users = firebase.firestore().collection('users'); // the users collection
+const clubs = firebase.firestore().collection('clubs'); // the clubs collection
+const curr_user = firebase.auth().currentUser; // the current user
 
+
+// get current user email and phone number
+export const getCurrUser = async () => {
+    if (curr_user) {
+        if (curr_user.email) {
+            console.log(curr_user.email);
+            const theUser = (await getUserByUserEmail(curr_user.email)).docs[0].data() as User;
+            return theUser
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
 
 // check if club exist
 export const checkIfTheClubExist = async (clubName: string) => {
@@ -80,11 +96,12 @@ export const login = async (email: string, password: string) => {
 export const signUp = async (name: string, email: string, password: string, phoneNumber: string) => {
     try {
         const {user} = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        if(user) {
+        if (user) {
             await firebase.firestore().collection('users').doc(user.uid).set({name, email, password, phoneNumber});
             return true
         }
-    } catch(error) {
+    } catch (error) {
+        console.log("error")
         return false
     }
 }
@@ -169,7 +186,6 @@ export const getUserIdByEmail = async (email: string) => {
     await getUserByUserEmail(email).then( async (value) => {
         id = value.docs[0].id;
       });
-      
       return id;
 }
 

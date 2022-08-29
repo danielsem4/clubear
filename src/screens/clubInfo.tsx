@@ -113,7 +113,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                         </TouchableOpacity>
                         <TouchableOpacity style={style.whatsappButtonWrapper} onPress={() => tableOrder()}>
                             <Drink name={'drink'} style={[style.whatsappIconStyle, {color: 'red'}]} />
-                            <Text style={style.clubInfoTextContent}>Order now</Text>
+                            <Text style={style.clubInfoTextContent}>VIP Tables</Text>
                         </TouchableOpacity>
                     </View>
                     <MapView

@@ -1,7 +1,6 @@
 import React, { FC, useState } from "react";
 import { View, Text, StyleSheet, ImageBackground, Dimensions } from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
-import Pdf from 'react-native-pdf';
 import {LinearGradient} from 'expo-linear-gradient';
 import { useRoute } from "@react-navigation/native";
 
@@ -19,7 +18,6 @@ const Menu : FC<Props> = (props) => {
     const pdf = route.params as Props
     console.log(pdf.menuUrl);
     
-
     return(
         <View style={styles.container}>
              <LinearGradient colors={['#021925', '#537895']} style={styles.headerWrapper}>
@@ -28,7 +26,7 @@ const Menu : FC<Props> = (props) => {
                         <Text style={{color: 'white', fontSize: 28, marginTop: '6%', marginRight: '8%'}}> Menu </Text>
                         <BackIcon name="arrow-back" size={40} style={styles.backIcon}  onPress={() => props.navigation.goBack()}/>
                     </View>
-                </LinearGradient>
+            </LinearGradient>
             {/* <Pdf source={{uri: pdf.menuUrl}} style={{flex: 1}} /> */}
         </View>
     )

@@ -3,15 +3,10 @@ import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOp
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import CardBrand from 'react-native-vector-icons/Fontisto';
-import Chip from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import {LinearGradient} from 'expo-linear-gradient';
 import { Input, Button } from "../components";
-import { ScrollView, TextInput } from "react-native-gesture-handler";
-
-
-
+import * as firebaseFunctions from '../constants/firebaseauth';
 
 const {height, width} = Dimensions.get('screen');
 
@@ -19,27 +14,49 @@ const Order : FC = () => {
     
     const navigation = useNavigation();
 
-    const [creditCardInput, setCreditCardInput] = useState(false); 
-    const [cardNumber, setCardNumber] = useState("4580 0000 0000 0000");
-    const [cardHloderName, setCardHloderName] = useState("Israel Israeli");
-    const [cardHloderId, setCardHloderId] = useState("123456789");
-    const [cvv, setCvv] = useState("123");
-    const [expiration, setExpiration] = useState("12/22");
+    const headLine = ['Guest Amount', 'Table Pack', ]; // the headlines in every screen
 
+    const [maleAmount, setMaleAmount] = useState(0); // male amount
+    const [femaleAmount, setFemaleAmount] = useState(0); // female amount
+    const [orderStage, setOrderStage] = useState(1); // order screen number
 
-    const [maleAmount, setMaleAmount] = useState(0);
-    const [femaleAmount, setFemaleAmount] = useState(0);
-    const [orderStage, setOrderStage] = useState(0);
+    const [phone, setPhone] = useState<string>(''); // users input phone number
 
-    const describe = [
-     "You need to enter the number of the people who are coming to the club",
-     "Enter your Id and the drink amount the addition on us (;"
-    ]
+    const describe = [ // the instructions on every screen
+     "You need to enter the number of the guest who are coming to the club",
+     "Please choose your table",
+    ];
+
+    // verify user
+    const verifyUserDetails = async () => {
+        const currUser = await firebaseFunctions.getCurrUser();
+        console.log(typeof(currUser));
+        if (currUser) {
+            if (currUser.phoneNumber === phone) {
+                return true;
+            } else {
+                Alert.alert("the phone number you input does not match the number of your user");
+                console.log(currUser.phoneNumber);
+                return false
+            }
+        } else {
+            Alert.alert("somthing went wrong, pls try again");
+            return false
+        }
+    }
 
     // handle the screen that is shown on every stage in the order
-    const next = () => {
-        if (orderStage < 1)
-            setOrderStage(orderStage + 1);
+    const next = async () => {
+        if (orderStage < 1) {
+            if (maleAmount + femaleAmount >= 5) {
+                if (await verifyUserDetails()) {
+                    setOrderStage(orderStage + 1);
+                } // phone number check
+            } // guest amount check 
+            else {
+            Alert.alert('to order a vip table you need at list 5 guests'); 
+            }
+        } // order stage check
     }
 
     // add male
@@ -64,28 +81,12 @@ const Order : FC = () => {
             setFemaleAmount(femaleAmount - 1);
     }
 
-    // display the card brand by the card number
-    const selectCardBrend = () => { ///
-        if (cardNumber[0] === '4') {
-            return <CardBrand name='visa' size={36} color='white' />
-        } else if (cardNumber[0] === '5') {
-            return <CardBrand name='mastercard' size={36} color='#ff5c33' />
-        } else if (cardNumber[0] === '3') {
-            return <CardBrand name='american-express' size={36} color='white' />
-        } else if (cardNumber[0] === '6') {
-            return <CardBrand name='discover' size={36} color='white' />
-        } else {
-            return <View />
-        }
-
-    }
-
     // box where you add and substruct amont of people on stage 0 of the order
     const peoplEamount = (sex: string) => {
         return(
-                <View >
+                <View style={{justifyContent: 'center'}}>
                     <View style={style.peopleAmountCard}>
-                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start'}}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly',  width: '99%'}}>
                             <Icons name= {sex} size= {42} color= 'white' />
                             <Text style={[{marginLeft: '2.5%', fontSize: 20, color: 'white'}]}>Total {sex}</Text>
                             <View style={style.peopleAmountBox}>
@@ -103,66 +104,102 @@ const Order : FC = () => {
         )
     }
 
+    // box where you select the deals
+    const deal = (color: string, table: string, peopleAmount: string, price: string) => {
+        
+        return (
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderColor: 'white', borderWidth: 0.8, marginTop: '3%', height: '9%'}}>
+                <View style={{flexDirection: 'column', alignItems: 'center', marginLeft: '5%'}}>
+                    <Text style={{color: 'white', fontSize: 20, marginBottom: '4%'}}>{table} table</Text>
+                    <Text style={{color: 'white', fontSize: 14}}>Maximum  {peopleAmount} people</Text>
+                </View>
+                <Text style={{color: 'white', fontSize: 18, marginLeft: '25%'}}> {price}₪</Text>
+                <TouchableOpacity style={{backgroundColor: color, height: '100%', width: '20%', justifyContent: 'center'}} onPress={() => {}}>
+                    <Text style={{color: 'white', fontSize: 20, alignSelf: 'center'}}> Book</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    // all order screens order by ascending order 
+    const orderScreens = () => {
+        switch (orderStage) {
+            // enter guest amount
+            case 0: 
+                return (
+                    <View style={style.peopleAmountContainer}>
+                        <View style={{height: '20%'}}>
+                            {peoplEamount("male")}
+                        </View>
+                        <View style={{height: '20%'}}>
+                            {peoplEamount("female")}
+                        </View>
+                        <View style={{borderColor: 'white', borderWidth: 0.6, marginTop: '10%' }}></View>
+                        <View style={{alignItems: 'center', marginTop: '5%'}}>
+                            <TouchableOpacity style={{marginBottom: '5%', marginTop: '5%'}} onPress={Keyboard.dismiss}>
+                                <Text style={{fontSize: 24, color: 'white', textAlign: 'center'}}>Please enter your phone number to proceed</Text>
+                            </TouchableOpacity>
+                            <View style={{marginBottom: '5%',}}>
+                                <Input shortInput={false} placeholder='Phone number' iconName='mobile1' onChangeText={(text) => setPhone(text)} />
+                            </View>
+                        </View>
+                        <View style={{alignItems: 'center'}}>
+                            <Button color1="#021925" color2="#537895" title='submit' onPress={() => next()} />
+                        </View>
+                    </View>
+                );
+
+            // enter guests information
+            case 1:
+                return (
+                    <View style={{flexDirection: 'column'}}>
+                        {deal('#0066cc', 'Regular', '5', '3000')}
+                        {deal('#ff3399', 'Premium', '8', '8500')}
+                        {deal('#b3b300', 'Vip', '8', '10,000')}
+                        <ImageBackground style={{width: '100%', height: '55%', marginTop: '20%'}} source={require('../assets/clubMap.png')} />
+                    </View>
+                );
+
+            // select your table
+            case 2:
+                return (
+                    <View>
+
+                    </View>
+                );
+
+            // make changes to the table default package
+            case 3:
+                return (
+                    <View>
+
+                    </View>
+                );
+
+            // enter payment method and place an order
+            case 4: 
+                return (
+                    <View>
+
+                    </View>
+                );
+        }
+    }
+
     return(
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
                 <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
-                        <BackIcon name="arrow-back" size={40} style={style.backIcon} onPress={() => orderStage > 0 ? setOrderStage(orderStage - 1) : navigation.goBack()}/>
+                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => orderStage > 0 ? setOrderStage(orderStage - 1) : navigation.goBack()}/>
+                        <Text style={{fontSize: 24, color: 'white', justifyContent: 'center', marginTop: '5.5%', marginRight: '6%'}}>{headLine[orderStage]}</Text>
+                        <View></View>
                     </View>
                 </LinearGradient>
-                <View style={style.describe}>
+                <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
                     <Text style={style.describeText}>{describe[orderStage]}</Text>
-                </View>
-                {orderStage === 0 ?
-                <View style={style.peopleAmountContainer}>
-                    <View>
-                        {peoplEamount("male")}
-                    </View>
-                    <View>
-                        {peoplEamount("female")}
-                    </View>
-                    <TouchableOpacity style={{alignSelf: 'center'}}
-                      onPress={() => (maleAmount + femaleAmount >= 6 && maleAmount <= femaleAmount) ? next()
-                      : Alert.alert("You need at list 6 persons and the male amount cant be higer the female amount")}>
-                        <Text style={{color: 'white', fontSize: 26}}>submit</Text>
-                    </TouchableOpacity>
-                </View>
-                :
-                <View style={{flex: 1, justifyContent: 'center', }}>
-                    <View style={{alignItems: 'center'}}>
-                        
-                    </View>
-                    <View style={style.paymentMethodWrapper}>
-                        <TouchableOpacity style={{width: '93%', alignItems: 'center'}} onPress={Keyboard.dismiss}>
-                            <View style={style.creditCardWrapper}>
-                                <View style={{marginTop: '5%', marginRight: '5%'}}> 
-                                    <Chip name='integrated-circuit-chip' size={30} color='#ffd700' />
-                                    <Text style={style.cardNumber}>{cardNumber}</Text>
-                                </View>
-                                <Text style={style.cardExpiration}>{expiration}</Text>
-                                <View style={{flexDirection: 'row', marginLeft: '2%'}}>
-                                    <Text style={style.cardHolderName}>{cardHloderName}</Text>
-                                    {selectCardBrend()}
-                                </View>
-                            </View>
-                        </TouchableOpacity>
-                        <View style={{marginTop: '10%'}}>
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Holder Name' iconName='user' onChangeText={(text) => setCardHloderName(text)} />
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Card Number' iconName='creditcard' onChangeText={(text) => setCardNumber(text)} />
-                            <Input shortInput={false} blurOnSubmit={false} placeholder='Your ID' iconName='idcard' onChangeText={(text) => setCardHloderId(text)} />
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                                <Input shortInput={true} blurOnSubmit={false} placeholder=' MM/YY' iconName='calendar' onChangeText={(text) => setExpiration(text)} />
-                                <Input shortInput={true} blurOnSubmit={false} placeholder='cvv' iconName='lock' onChangeText={(text) => setCvv(text)} />
-                            </View>
-                            <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                                <Button color="#00004d" title="Check Out" onPress={() => {}} />
-                            </View>
-                            
-                        </View>
-                    </View>
-                </View>
-            }
+                </TouchableOpacity>
+                {orderScreens()}
             </ImageBackground>
         </KeyboardAvoidingView>
     )
@@ -216,11 +253,10 @@ const style = StyleSheet.create({
         flexDirection: 'column',
         height: '50%',
         marginTop: '5%',
-        backgroundColor: 'red'
     },
     peopleAmountCard: { // people amount button wrapper
         width: '85%',
-        height: '55%',
+        height: '80%',
         borderRadius: 14,
         alignItems: 'center',
         marginTop: '3%',
@@ -263,7 +299,6 @@ const style = StyleSheet.create({
         alignContent: 'center',
         alignItems: 'center',
         flex: 1
-        
     },
     creditCardWrapper: {
         height: 200,
