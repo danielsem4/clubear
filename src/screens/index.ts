@@ -5,10 +5,16 @@ import About from "./about";
 import ForgotPassword from "./forgotPassword";
 import ClubInfo from "./clubInfo";
 import AppLoader from "./appLoader";
-import Order from "./order";
 import Settings from "./settings";
 import Admin from "./admin";
 import Menu from "./menu";
+import PickDate from "./pickDate";
+import GuestAmount from "./guestAmount";
+import TablePackage from "./tablePackage";
+import PickFromMenu from "./pickFromMenu";
 
 
-export {SignUp, Login, Home, About , ClubInfo, ForgotPassword ,AppLoader, Order, Settings, Admin, Menu }
+export {SignUp, Login, Home, About,
+        ClubInfo, ForgotPassword, AppLoader,
+        Settings, Admin, Menu, PickDate,
+        GuestAmount, TablePackage, PickFromMenu }

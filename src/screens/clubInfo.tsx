@@ -11,14 +11,13 @@ import { RootState } from '../redux/store';
 import { useDispatch } from 'react-redux';
 import {LinearGradient} from 'expo-linear-gradient';
 
-
 const {height, width} = Dimensions.get('screen');
 
 interface ClubsParameters {
     navigation: any;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -49,7 +48,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
 
     const dispatch = useDispatch();
     const route = useRoute();
-    const club= route.params as ClubsParameters
+    const club = route.params as ClubsParameters
     const screenState = useSelector((state: RootState) => state.user);  
     const navigation = useNavigation();
     console.log(club.theClub['menu_url']);
@@ -57,7 +56,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     // navigate to order screen
     const tableOrder = () => {
         if (screenState.logedIn) {
-            props.navigation.navigate('order')
+            props.navigation.navigate('pickDate', {theClub: club});
         } else {
             Alert.alert("You need to login to order a table")
         }
@@ -65,7 +64,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     
     // send message to whatsapp
     const contactWhatsapp = () => {
-        Linking.openURL('https://wa.me/+972542249285?text=Hello bear');
+        Linking.openURL('https://wa.me/+972542249285?text=הגיעה שמועה לאוזנו של הדוב שהיום אתה מחפש להתפרק, כמה דקות חוזר אליך עם ההצעות הכי טובות בעיר');
     }
 
     return(
@@ -78,7 +77,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                     <View />
                 </View>
             </LinearGradient>
-                <Image source={{uri: club.theClub['imageUrl']}} style={style.photo} />
+                <Image source={{uri: club.theClub['url']}} style={style.photo} />
                 <View style={style.clubInfoWrapper}>
                     <View style={style.clubInfoAndIconWrapper}>
                         <Icons name={'info-circle'} style={style.iconStyle} />
@@ -164,7 +163,8 @@ const style = StyleSheet.create({
         marginTop: '4%',
     },
     backIcon: {
-        color: 'white'
+        color: 'white',
+        marginLeft: '2%'
     },
     clubName: {
         fontSize: 32,

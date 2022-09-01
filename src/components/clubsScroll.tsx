@@ -9,7 +9,7 @@ interface Props {
     navigation: any;
     clubList: {
         name: string;
-        imageUrl: string;
+        url: string;
         mapUrl: string;
         menuUrl: string;
         city: string;
@@ -33,6 +33,7 @@ const ClubsScroll : FC<Props> = (props) => {
 
     const animatedValue = useRef( new Animated.Value(0)).current;
     
+    
     return(
         <View>
             <Text style={style.flatListClubCity}>{props.clubLocation}</Text>
@@ -54,7 +55,7 @@ const ClubsScroll : FC<Props> = (props) => {
                     return(
                         <View style={style.flatListImageContainer}>
                             <TouchableOpacity style={style.flatListBottunContainer} onPress={() => props.navigation.navigate('clubInfo', {theClub: item})}>
-                                <Image style={style.flatListImageStyle} source={{uri: item.imageUrl}} />
+                                <Image style={style.flatListImageStyle} source={{uri: item.url}} />
                                 <Text style={[style.flatListClubNameStyle, {marginLeft: '2.5%'}]}>{item.name}</Text>
                                 <Text style={[style.flatListClubNameStyle, {fontSize: 14}]}> <Icons name={'map-marker'} style={style.iconStyle} /> {item.city}</Text>
                             </TouchableOpacity>
