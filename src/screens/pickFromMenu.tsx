@@ -4,7 +4,7 @@ import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import {LinearGradient} from 'expo-linear-gradient';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import { OrderBox } from "../components";
+import { Button, OrderBox } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
@@ -33,7 +33,7 @@ interface OrderParams { // order details
 
 const {height, width} = Dimensions.get('screen');
 
-const PickFromMenu : FC<OrderParams> = () => {
+const PickFromMenu : FC<OrderParams> = (props) => {
 
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
@@ -69,6 +69,9 @@ const PickFromMenu : FC<OrderParams> = () => {
                         </View>
                         <Image source={require('../assets/beluga_witout_background.png')} style={{width: '30%', height: height / 6.5}} />
                     </View>
+                </View>
+                <View style={{alignItems: 'center', alignSelf: 'center', marginTop: '3%'}}>
+                    <Button color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment')} />
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>

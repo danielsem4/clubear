@@ -63,7 +63,7 @@ const ClubsScroll : FC<Props> = (props) => {
                     )
                 }}
             />
-            <Animated.FlatList
+            <Animated.FlatList // animate the dots under the cards
                 style={style.flatList}
                 horizontal
                 showsHorizontalScrollIndicator={false}

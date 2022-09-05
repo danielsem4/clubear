@@ -95,9 +95,13 @@ const Admin : FC<Props> = (props) => {
 
     // upload picture to the storage
     const uploadClubPicture = async () => {
+        console.log(0);
         props.navigation.navigate('appLoader');
+        console.log(0.5);
         if (image !== null && clubName !== '') {
+            console.log(1);
             await firebaseFunctions.uploadImage(image, clubName);
+            console.log(2);
             setPictureUploaded(true);
             const picUrl = await firebaseFunctions.getImageUrl(clubName);
             setUrl(picUrl);
@@ -156,11 +160,11 @@ const Admin : FC<Props> = (props) => {
         return (
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '80%'}}>
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Icons name='image' size={70} color="white" onPress={() => pickImage()} />
+                    <Icons name='image' size={70} color="white" onPress={pickImage} />
                     <Text style={{fontSize: 18, color: 'white',}}>select club image</Text>
                 </View>
                 <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Icons name='upload' size={70} color="white" onPress={() => uploadClubPicture()} />
+                    <Icons name='upload' size={70} color="white" onPress={uploadClubPicture} />
                     <Text style={{fontSize: 18, color: 'white',}}>upload club image</Text>
                 </View>
             </View>

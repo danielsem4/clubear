@@ -5,7 +5,7 @@ import './firebase'
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import firebaseConfig from './firebase';
-import { getDownloadURL, getStorage, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from 'firebase/storage';
 
 
 
@@ -107,21 +107,19 @@ export const signUp = async (name: string, email: string, password: string, phon
 }
 
 // image upload function
-export const uploadImage  = async (url: string, clubName: string) => {  
-    console.log('here 1');
-    const storage = getStorage();
+export const uploadImage  = async (url: string, clubName: string) => { 
+    try {
+        const storage = getStorage();
+        const reffernce = ref(storage, `home_image/${clubName}_main.png`);
 
-    console.log('here 2');
-    const reffernce = ref(storage, `home_image/${clubName}_main.png`);
-
-    console.log('here 3');
-    const image = await fetch(url);
-
-    console.log('here 4');
-    const bytes = await image.blob();
-
-    console.log('here 5');
-    await uploadBytes(reffernce, bytes);
+        const image = await fetch(url);
+        const bytes = await image.blob();
+        await uploadBytes(reffernce, bytes);
+        
+    } catch (error) {
+        console.log('error 2');
+    } 
+    
 }
 
 // new club add function 

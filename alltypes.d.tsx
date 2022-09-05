@@ -8,6 +8,8 @@ declare module 'react-native-vector-icons/Feather';
 declare module 'react-native-vector-icons/Fontisto';
 declare module 'react-native-vector-icons/MaterialCommunityIcons';
 declare module 'deprecated-react-native-prop-types';
+declare module 'react-native-vector-icons/FontAwesome5';
+declare module 'react-native-credit-card-input';
 
 
 

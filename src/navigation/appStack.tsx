@@ -3,7 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import {Home, SignUp, Login, ClubInfo, About,
         Settings, Admin, AppLoader, ForgotPassword,
         Menu, PickDate, GuestAmount, TablePackage,
-        PickFromMenu } from '../screens';
+        PickFromMenu, Payment } from '../screens';
 
 const {Navigator, Screen} = createStackNavigator();
 
@@ -24,6 +24,7 @@ const AppStack : FC = () => {
             <Screen name="guestAmount" component={GuestAmount} />
             <Screen name="tablePackage" component={TablePackage} />
             <Screen name="pickFromMenu" component={PickFromMenu} />
+            <Screen name="payment" component={Payment} />
             <Screen name='menu' component={Menu} />
             <Screen name='admin' component={Admin} />
             

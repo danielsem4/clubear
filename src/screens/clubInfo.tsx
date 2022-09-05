@@ -2,7 +2,7 @@ import React, { FC, useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Image, Linking, } from 'react-native';
 import 'firebase/compat/auth';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import Drink from 'react-native-vector-icons/Entypo';
+import Drink from 'react-native-vector-icons/FontAwesome5';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import  MapView, {Callout, Marker } from 'react-native-maps';
@@ -53,13 +53,18 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     const navigation = useNavigation();
     console.log(club.theClub['menu_url']);
 
-    // navigate to order screen
+    // navigate to table order screen
     const tableOrder = () => {
         if (screenState.logedIn) {
             props.navigation.navigate('pickDate', {theClub: club});
         } else {
-            Alert.alert("You need to login to order a table")
+            Alert.alert("You need to login to order a table");
         }
+    }
+
+    // navigate to ticket order screen
+    const ticketOrder = () => {
+        props.navigation.navigate('pickDate', {theClub: club});
     }
     
     // send message to whatsapp
@@ -108,11 +113,15 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
                     <View style={style.contactButtonsContainer}>
                         <TouchableOpacity style={style.whatsappButtonWrapper} onPress={contactWhatsapp}>
                             <Icons name={'whatsapp'} style={style.whatsappIconStyle} />
-                            <Text style={style.clubInfoTextContent}>Contact Us</Text>
+                            <Text style={style.clubInfoTextContent}>Whatsapp</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={style.whatsappButtonWrapper} onPress={() => tableOrder()}>
-                            <Drink name={'drink'} style={[style.whatsappIconStyle, {color: 'red'}]} />
-                            <Text style={style.clubInfoTextContent}>VIP Tables</Text>
+                            <Drink name={'glass-cheers'} style={[style.whatsappIconStyle, {color: 'red'}]} />
+                            <Text style={style.clubInfoTextContent}>Tables</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={style.whatsappButtonWrapper} onPress={ticketOrder}>
+                            <Icons name={'ticket'} style={[style.whatsappIconStyle, {color: 'lightblue'}]} />
+                            <Text style={style.clubInfoTextContent}>Tickets</Text>
                         </TouchableOpacity>
                     </View>
                     <MapView
@@ -174,6 +183,7 @@ const style = StyleSheet.create({
     },
     photo: { // the club picture
         height: '32%',
+        
     },
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
@@ -181,9 +191,10 @@ const style = StyleSheet.create({
         height: height
     },
     clubInfoWrapper: {
+        flexDirection: 'column',
         width: '92%',
         height: '30%',
-        marginBottom: '10%'
+        marginBottom: '7%',
     },
     clubInfoAndIconWrapper: {
         flexDirection: 'row',
@@ -202,7 +213,7 @@ const style = StyleSheet.create({
     },
     contactButtonsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     whatsappButtonWrapper: {
         flexDirection: 'row',

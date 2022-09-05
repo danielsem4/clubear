@@ -12,9 +12,11 @@ import PickDate from "./pickDate";
 import GuestAmount from "./guestAmount";
 import TablePackage from "./tablePackage";
 import PickFromMenu from "./pickFromMenu";
+import Payment from "./payment";
 
 
 export {SignUp, Login, Home, About,
         ClubInfo, ForgotPassword, AppLoader,
         Settings, Admin, Menu, PickDate,
-        GuestAmount, TablePackage, PickFromMenu }
+        GuestAmount, TablePackage, PickFromMenu,
+        Payment }

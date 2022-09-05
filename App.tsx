@@ -5,7 +5,6 @@ import MainNav from './src/navigation/mainNav';
 import 'react-native-gesture-handler';
 import { Provider as ReduxProvider } from 'react-redux';
 import store from './src/redux/store';
-import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 
 
 export default function App() {
