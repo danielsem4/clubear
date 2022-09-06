@@ -6,8 +6,8 @@ import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture
 import { useDispatch } from 'react-redux';
 import  { useActions }  from '../redux/reducers';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import * as Facebook from 'expo-facebook';
 import * as firebaseFunctions from '../constants/firebaseauth';
+// import * as Google from 'expo-auth-session/providers';
 
 
 const {height, width} = Dimensions.get('screen');
@@ -21,34 +21,27 @@ const Login : FC<Props> = (props) => {
     const dispatch = useDispatch()
     const navigation = useNavigation();
 
+    // const [request, response, promptAsync] = Google.useAuthRequest({
+    //     expoClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    //     iosClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    //     androidClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    //     webClientId: 'GOOGLE_GUID.apps.googleusercontent.com',
+    //   });
+
     const [email, setEmail] = useState<string | null>(null);
     const [password, setPassword] = useState<string | null>(null);
 
     // facebook login
     const facebookLogIn = async () => {
-        try {
-            await Facebook.initializeAsync({ 
-                appId: '786372692551742',
-            });
-            const result = await Facebook.logInWithReadPermissionsAsync({
-                permissions: ['public_profile'],
-            });
-            if (result.type === 'success') {
-                // using facebook graph API here
-                fetch(`https://graph.facebook.com/me?access_token=${result.token}&fields=id,name,email`)
-                .then(res => {
-                    return res.json();
-                })
-                .then(data => {
-                    dispatch(useActions.setLogedIn());
-                    dispatch(useActions.updateName(data.name));
-                    props.navigation.navigate('home');
-                })
-                .catch(e => console.log(e));
-            } 
-        }  catch ({message}) {
-            alert(`Facebook Login Error: ${message}`)
-        }
+        // props.navigation.navigate('appLoader');
+        // const result = await firebaseFunctions.signInWithFB();
+        // if (!result) {
+        //     dispatch(useActions.setLogedIn());
+        //     props.navigation.navigate('home');
+        // } else {
+        //     props.navigation.navigate('login');
+        //     Alert.alert('something went wrong please try again');
+        // }
     }
 
     // google login

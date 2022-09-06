@@ -6,7 +6,8 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import firebaseConfig from './firebase';
 import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from 'firebase/storage';
-
+import { LoginManager , AccessToken } from 'react-native-fbsdk-next';
+import { AppleButton } from '@invertase/react-native-apple-authentication';
 
 
 const app = firebase.initializeApp(firebaseConfig);
@@ -34,8 +35,56 @@ interface User { // the user info structre
 
 const users = firebase.firestore().collection('users'); // the users collection
 const clubs = firebase.firestore().collection('clubs'); // the clubs collection
+const menu = firebase.firestore().collection('menu'); // the menu products cllection
 const curr_user = firebase.auth().currentUser; // the current user
 
+
+// sign in with google
+const signinWithGoogle = async () => {
+
+}
+
+//sign in with apple
+const signInWithApple = async () => {
+
+}
+
+// sign in with Facebook
+export const signInWithFB = async () => {
+    // try {
+    //     // Attempt login with permissions
+    //     const result = await LoginManager.logInWithPermissions(['public_profile']);
+    //     // stuck here
+    
+    //     if (result.isCancelled) {
+    //       throw 'User cancelled the login process';
+    //     }
+    
+    //     // Once signed in, get the users AccessToken
+    //     const data = await AccessToken.getCurrentAccessToken();
+    
+    //     if (!data) {
+    //       throw 'Something went wrong obtaining access token';
+    //     }
+
+    //     return true;
+    
+    //   } catch (error) {
+    //     console.log(error);
+    //     return false;
+    //   }
+}
+
+// upload new product 
+export const uploadNewProduct = async (category: string, clubID: string, name: string, price: string, productPictureUrl: string) => {
+    await menu.doc().set({
+        category,
+        clubID,
+        name,
+        price,
+        productPictureUrl
+    });
+}
 
 // get current user email and phone number
 export const getCurrUser = async () => {

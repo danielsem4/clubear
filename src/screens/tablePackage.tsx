@@ -71,9 +71,9 @@ const TablePackage : FC<OrderParams> = (props) => {
                 <View style={{flexDirection: 'column'}}>
                     <ImageBackground style={{width: '100%', height: '65%'}} source={require('../assets/clubMap.png')} />
                     <View style={{flex: 1, flexDirection: 'column', }}>
-                        <OrderBox tableType="Regular" color="blue" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
-                        <OrderBox tableType="Bar" color="#ff33cc" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
-                        <OrderBox tableType="VIP" color="#cca300" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
+                        <OrderBox tableType="Regular" color="#009adf" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
+                        <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
+                        <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
                     </View>
                 </View>
             </ImageBackground>

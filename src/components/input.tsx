@@ -28,10 +28,10 @@ const Input : FC<Props> = (props) => {
         </View>
         :
         <View style={styles.shortinputContainer}>
-            <View style={styles.shortIconStyle}>
-                <AntDesign name={props.iconName} size={24} />
+            <View style={{display: 'flex', width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', height: '100%'}}>
+                <AntDesign name={props.iconName} size={24} style={{marginRight: '10%'}}  />
+                <TextInput defaultValue={props.defaultValue} blurOnSubmit={props.blurOnSubmit} style={{marginRight: '10%', minWidth: '40%'}} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
             </View>
-            <TextInput defaultValue={props.defaultValue} blurOnSubmit={props.blurOnSubmit} style={styles.input} value={props.value} placeholder={props.placeholder} secureTextEntry={props.secureTextEntry} onChangeText={props.onChangeText}  />
         </View>
     );
 }
@@ -66,17 +66,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     shortinputContainer: {
-        width: width / 3.3,
+        width: width / 3.2,
         marginTop: '1.5%',
         marginBottom: '3%',
         height: height / 16,
         borderColor: '#ccc',
         borderRadius: 10,
         borderWidth: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: '#fff'
+        backgroundColor: '#fff',
     },
     iconStyle: {
         height: '100%',
@@ -94,18 +91,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignContent: 'center',
     },
-    inputFielld: {
-        width: width / 1.5,
-        height: height / 16,
-        fontSize: 16,
-        borderRadius: 8,   
-    },
-    shortIconStyle: {
-        height: '100%',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadiusColor: '#ccc',
-        borderRadiusWidth: 1,
-        width: '23%',
-    },
+    
+    
 })

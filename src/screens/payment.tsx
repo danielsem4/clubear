@@ -43,7 +43,7 @@ const Payment : FC<OrderParams> = (props) => {
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
 
-    const [cardNumber, setCardNumber] = useState<string>('**** **** **** ****'); // card number
+    const [cardNumber, setCardNumber] = useState<string>('4580 1059 1234 ****'); // card number
     const [cardHolderName, setHolderName] = useState<string>('Israel Israeli'); // card holder name
     const [cardExpired, setCardExpired] = useState<string>('MM/YY'); // card date of expire
     const [cardCvv, setCardCvv] = useState<string>('000'); // 3 numbers behind the card
@@ -73,14 +73,14 @@ const Payment : FC<OrderParams> = (props) => {
                     </View>
                 </LinearGradient>
                 <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
-                    <Text style={style.describeText}>we will charg 10% from the order from the credit card for surety </Text>
+                    <Text style={style.describeText}>we will charge 10% from the order from the credit card for deposit </Text>
                 </TouchableOpacity>
                 <View style={style.paymentInputContainer}>  
                     <TouchableOpacity style={style.creditCardWrapper} onPress={Keyboard.dismiss}>
-                        <ImageBackground source={require('../assets/creditCard.png')} style={style.creditCard} imageStyle={{ borderRadius: 12 }}>
+                        <ImageBackground source={require('../assets/graycreditcard.png')} style={style.creditCard} imageStyle={{ borderRadius: 12 }}>
                             {cardBrand()}
-                            <Text style={{color: 'silver', fontSize: 24, marginTop: '12%', marginLeft: '15%', fontWeight: 'bold'}}>{cardNumber}</Text>
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '6%'}}>
+                            <Text style={{color: 'silver', fontSize: 24, marginTop: '15%', marginLeft: '24%', fontWeight: 'bold'}}>{cardNumber}</Text>
+                            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: '9%'}}>
                                 <View style={{flexDirection: 'column'}}>
                                     <Text style={{color: 'silver', fontSize: 14, marginLeft: '6%'}}>CARD HOLDER</Text>
                                     <Text style={{color: 'silver', fontSize: 22, marginLeft: '6%', fontWeight: 'bold'}}>{cardHolderName}</Text>
@@ -92,7 +92,7 @@ const Payment : FC<OrderParams> = (props) => {
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
-                    <View>
+                    <View style={{marginTop: '5%'}}>
                         <Input shortInput={false} placeholder='Card Number*' iconName='creditcard' onChangeText={(text) => setCardNumber(text)} />
                         <Input shortInput={false} placeholder='Card Holder Name*' iconName='idcard' onChangeText={(text) => setHolderName(text)} />
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -101,18 +101,13 @@ const Payment : FC<OrderParams> = (props) => {
                         </View>
                     </View>
                     <View style={{alignItems: 'center', marginTop: '5%'}}>
-                        <Button color1='#021925' color2='#537895' title='continue' onPress={() => {}} />
+                        <Button color1='#021925' color2='#537895' title='continue' onPress={()  =>  {}} />
                     </View>
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>
     );
 }
-
-/* <View style={{alignItems: 'center', marginTop: '5%'}}>
-                    <Button color1='#021925' color2='#537895' title='continue' onPress={() => {}} />
-                </View>
-                */
 
 export default Payment;
 
@@ -166,8 +161,7 @@ const style = StyleSheet.create({
         alignSelf: 'center',
         textAlign: 'center'
     },
-    paymentInputContainer: { // 
-        position: 'relative',
+    paymentInputContainer: { // the credit card and inputs container
         flexDirection: 'column',
         height: '65%',
         width: '95%',
@@ -178,9 +172,10 @@ const style = StyleSheet.create({
             width: 5,
             height: 5
         },
-        shadowOpacity: 0.75,
+        shadowOpacity: 2,
+        // backgroundColor: '#DCDCDC',
         elevation: 15,
-        backgroundColor: '#cccccc',
+        
         alignSelf: 'center'
     },
     creditCardWrapper: {
@@ -189,6 +184,6 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
     }, 
     creditCard: {
-        aspectRatio: 2 / 1.18,
+        aspectRatio: 2 / 1.22,
     }
 });

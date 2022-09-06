@@ -7,7 +7,7 @@ interface Props {
     clubLocation: string;
     clubList: {
         name: string;
-        imageUrl: string;
+        url: string;
         mapUrl: string;
         menuUrl: string;
         city: string;

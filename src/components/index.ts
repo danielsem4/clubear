@@ -5,6 +5,7 @@ import SidebarButton from './sidebarButton';
 import ClubsScroll from './clubsScroll';
 import ClubsByCity from './clubsByCity';
 import OrderBox from './orderBox';
+import Product from "./product";
 
 
-export {Input, Button, SocialButton, SidebarButton, ClubsScroll, ClubsByCity, OrderBox }
+export {Input, Button, SocialButton, SidebarButton, ClubsScroll, ClubsByCity, OrderBox, Product }

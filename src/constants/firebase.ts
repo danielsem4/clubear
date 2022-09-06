@@ -1,4 +1,6 @@
-export default {
+
+
+  export default {
   apiKey: "AIzaSyACCL0l7QjxIfQtppDqFDAvM9Ay3oXEoAA",
   authDomain: "clubear-4dff8.firebaseapp.com",
   projectId: "clubear-4dff8",
@@ -6,5 +8,6 @@ export default {
   messagingSenderId: "321779486139",
   appId: "1:321779486139:web:eb3d4e61365c8c00f3889e"
 };
+
 
 

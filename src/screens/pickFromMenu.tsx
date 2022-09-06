@@ -3,10 +3,21 @@ import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOp
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import {LinearGradient} from 'expo-linear-gradient';
+import 'firebase/compat/auth';
+import firebase from 'firebase/compat/app';
+import '../constants/firebase'
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { Button, OrderBox } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import * as firebaseFunctions from '../constants/firebaseauth';
+
+interface Product {
+    category: string;
+    clubID: string;
+    name: string;
+    price: string;
+    productPictureUrl: string;
+}
 
 interface OrderParams { // order details
     navigation: any;
@@ -38,6 +49,24 @@ const PickFromMenu : FC<OrderParams> = (props) => {
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
+
+    const [products, setProducts] = useState<Product[]>([]); // the club products
+    const [productCategory, setProductCategory] = useState<string[]>(['']); // the product category
+
+    useEffect(() => { // get the clubs menu items
+        const getProducts = async () => {
+            await firebase.firestore().collectionGroup('menu').get().then((querySnapshot) => {
+                querySnapshot.forEach(snapshot => {
+                    products.push(snapshot.data() as Product);
+                });
+                setProducts([...products]);
+            }).then(() => {
+                setProductCategory(Array.from(new Set(products.map(products => products.category))));
+            });
+            console.log(products);
+        }
+        getProducts();
+    }, [])
     
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
