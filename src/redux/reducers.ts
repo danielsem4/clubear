@@ -16,8 +16,9 @@ const initialState : UserState = {
     load: true  // the load value is opposite to the screen state!!
 };
 
+
 const userSlice = createSlice({
-    name: 'Israel',
+    name: 'stateSlice',
     initialState: initialState,
     reducers: {
         setLoader: state => {

@@ -24,7 +24,7 @@ interface Props { // the home screen title, navigation opption
 
 interface Club { // the club info structre
     name: string;
-    imageUrl: string;
+    url: string;
     mapUrl: string;
     menuUrl: string;
     city: string;
@@ -35,7 +35,7 @@ interface Club { // the club info structre
     mapCoordinates: {
         latitude: 32.05506,
         longitude: 34.77488
-    };
+    }
 }
 
 const Home : FC<Props> = (props) => {
@@ -55,7 +55,7 @@ const Home : FC<Props> = (props) => {
     const closeButtonOffset = useRef(new Animated.Value(0)).current; // side bar animation
 
     useEffect(() => { // get the clubs info from firebase
-        const get_clubs = async () => {
+        const getClubs = async () => {
             await firebase.firestore().collectionGroup('clubs').get().then((querySnapshot) => {
                 querySnapshot.forEach(snapshot => {
                     clubs.push(snapshot.data() as Club);
@@ -65,7 +65,7 @@ const Home : FC<Props> = (props) => {
                 setClubsCities(Array.from(new Set(clubs.map(club => club.city))));
             })
         }
-        get_clubs();
+        getClubs();
     }, [])
 
     // search club function
@@ -263,7 +263,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     homeHeaderContainer: { // the home top bear image container
         display: 'flex',

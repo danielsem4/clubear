@@ -4,7 +4,7 @@ import BackIcon from 'react-native-vector-icons/Ionicons';
 import CardBrand from 'react-native-vector-icons/Fontisto';
 import Bank from 'react-native-vector-icons/FontAwesome';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, OrderBox, Input } from "../components";
+import { Button, OrderBox, Input, NumericInput } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import * as firebaseFunctions from '../constants/firebaseauth';
@@ -47,6 +47,13 @@ const Payment : FC<OrderParams> = (props) => {
     const [cardHolderName, setHolderName] = useState<string>('Israel Israeli'); // card holder name
     const [cardExpired, setCardExpired] = useState<string>('MM/YY'); // card date of expire
     const [cardCvv, setCardCvv] = useState<string>('000'); // 3 numbers behind the card
+    
+
+    const checkCardInputValidation = () => {
+        if (cardCvv.length === 3 && cardHolderName !== '' && cardNumber.length === 19) {
+            
+        }
+    }
 
     const cardBrand = () => {
         if (cardNumber[0] === '4') {
@@ -93,15 +100,15 @@ const Payment : FC<OrderParams> = (props) => {
                         </ImageBackground>
                     </TouchableOpacity>
                     <View style={{marginTop: '5%'}}>
-                        <Input shortInput={false} placeholder='Card Number*' iconName='creditcard' onChangeText={(text) => setCardNumber(text)} />
+                        <NumericInput maxLenght={19} shortInput={false} placeholder='Card Number*' iconName='creditcard' onChangeText={(text) => setCardNumber(text)} />
                         <Input shortInput={false} placeholder='Card Holder Name*' iconName='idcard' onChangeText={(text) => setHolderName(text)} />
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                            <Input shortInput={true} placeholder='Expired*' iconName='calendar' onChangeText={(text) => setCardExpired(text)} />
-                            <Input shortInput={true} placeholder='CVV*' iconName='lock1' onChangeText={(text) => setCardCvv(text)} />
+                            <NumericInput maxLenght={5} shortInput={true} placeholder='Expired*' iconName='calendar' onChangeText={(text) => setCardExpired(text)} />
+                            <NumericInput maxLenght={3} shortInput={true} placeholder='CVV*' iconName='lock1' onChangeText={(text) => setCardCvv(text)} />
                         </View>
                     </View>
                     <View style={{alignItems: 'center', marginTop: '5%'}}>
-                        <Button color1='#021925' color2='#537895' title='continue' onPress={()  =>  {}} />
+                        <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={()  =>  {}} />
                     </View>
                 </View>
             </ImageBackground>
@@ -115,7 +122,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     container: {
         flex: 1,

@@ -41,7 +41,7 @@ const ForgotPassword : FC<Props> = (props) => {
           <View style={{marginTop: '5%', alignItems: 'center'}}>
               <Text style={{fontSize: 24, color: 'white', textAlign: 'center'}}>Enter your email</Text>
               <Input shortInput={false} placeholder='Your email* ' iconName='mail' onChangeText={(mail) => setEmail(mail)} />
-              <Button color='#4a1b83' title='Submmit' onPress={() => handlePasswordReset()} />
+              <Button smallButton={false} color1='#724997' color2='#3F1651' title='Submmit' onPress={() => handlePasswordReset()} />
           </View>
           <TouchableOpacity style={{width, height, alignItems: 'center'}} onPress={Keyboard.dismiss}> 
               

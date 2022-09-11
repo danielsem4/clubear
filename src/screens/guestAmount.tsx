@@ -4,7 +4,7 @@ import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import {LinearGradient} from 'expo-linear-gradient';
 import Icons from 'react-native-vector-icons/FontAwesome';
-import { Input, Button } from "../components";
+import { Input, Button, NumericInput } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
@@ -41,6 +41,7 @@ const GuestAmount : FC<OrderParams> = (props) => {
     const [maleAmount, setMaleAmount] = useState<number>(0); // male amount
     const [femaleAmount, setFemaleAmount] = useState<number>(0); // female amount
     const [phone, setPhone] = useState<string>(''); // users input phone number
+    const [instagram, setInstegram] = useState<string>(''); // users instegram account
 
     // verify user phone number input
     const verifyPhoneNumber =  () => {
@@ -137,14 +138,15 @@ const GuestAmount : FC<OrderParams> = (props) => {
                     <View style={{borderColor: 'white', borderWidth: 0.6, marginTop: '10%' }}></View>
                     <View style={{alignItems: 'center', marginTop: '5%'}}>
                         <TouchableOpacity style={{marginBottom: '5%', marginTop: '5%'}} onPress={Keyboard.dismiss}>
-                            <Text style={{fontSize: 24, color: 'white', textAlign: 'center'}}>Please enter your phone number to proceed</Text>
+                            <Text style={{fontSize: 24, color: 'white', textAlign: 'center'}}>Please enter your phone number and instegram account name to proceed</Text>
                         </TouchableOpacity>
                         <View style={{marginBottom: '5%',}}>
-                            <Input shortInput={false} placeholder='Phone number' iconName='mobile1' onChangeText={(text) => setPhone(text)} />
+                            <NumericInput maxLenght={10} shortInput={false} placeholder='Phone number*' iconName='mobile1' onChangeText={(text) => setPhone(text)} />
+                            <Input shortInput={false} placeholder='Instegram Account Name*' iconName='instagram' onChangeText={(text) => setInstegram(text)} />
                         </View>
                     </View>
                     <View style={{alignItems: 'center'}}>
-                        <Button color1="#021925" color2="#537895" title='submit' onPress={() => next()} />
+                        <Button smallButton={false} color1="#021925" color2="#537895" title='submit' onPress={() => next()} />
                     </View>
                 </View>
             </ImageBackground>
@@ -158,7 +160,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     container: {
         flex: 1,

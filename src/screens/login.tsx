@@ -95,7 +95,7 @@ const Login : FC<Props> = (props) => {
                         <TouchableOpacity onPress={() => props.navigation.navigate('forgotPassword')} >
                             <Text style={style.textDecoration}> Forgot your password?</Text>
                         </TouchableOpacity>
-                        <Button color1='#724997' color2='#3F1651' title='Login' onPress={login} />
+                        <Button smallButton={false} color1='#724997' color2='#3F1651' title='Login' onPress={login} />
                     </View>
                     <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '60%', marginBottom: '3%'}}>
                         <Text style={[style.textDecoration, {textAlign: 'center', alignSelf: 'center',}]}>_________________ </Text>

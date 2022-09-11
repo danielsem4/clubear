@@ -20,12 +20,15 @@ const OrderBox : FC<Details> = (props) => {
         <View style={style.boxContainer}>
             <View style={{flexDirection: 'column', alignItems: 'center', marginLeft: '5%'}}>
                 <Text style={{color: 'white', fontSize: 20, marginBottom: '4%'}}>{props.tableType} table</Text>
-                <Text style={{color: 'white', fontSize: 14}}>Maximum  {props.peopleAmount} people</Text>
+                <Text style={{color: 'white', fontSize: 14}}>{props.peopleAmount} Free Tickets</Text>
             </View>
-            <Text style={{color: 'white', fontSize: 18, marginLeft: '25%'}}> {props.price}₪</Text>
-            <TouchableOpacity style={{backgroundColor: props.color, height: '100%', width: '20%', justifyContent: 'center'}} onPress={props.onPress}>
-                <Text style={{color: 'white', fontSize: 20, alignSelf: 'center'}}> Book</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', height: '100%', alignItems: 'center', width: '35%'}}>
+                <Text style={{color: 'white', fontSize: 18, justifyContent: 'center'}}> {props.price}₪</Text>
+                <TouchableOpacity style={{backgroundColor: props.color, height: '100%', width: '55%', justifyContent: 'center'}} onPress={props.onPress}>
+                    <Text style={{color: 'white', fontSize: 20, alignSelf: 'center'}}> Book</Text>
+                </TouchableOpacity>
+            </View>
+            
         </View>
     );
 }
@@ -40,6 +43,6 @@ const style = StyleSheet.create({
         borderColor: 'white',
         borderWidth: 0.8,
         marginTop: '3%',
-        height: '35%'
+        height: '32%'
     },
 });

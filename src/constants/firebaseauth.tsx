@@ -12,6 +12,14 @@ import { AppleButton } from '@invertase/react-native-apple-authentication';
 
 const app = firebase.initializeApp(firebaseConfig);
 
+interface Product {
+    category: string;
+    clubID: string;
+    name: string;
+    price: number;
+    productPictureUrl: string;
+};
+
 interface Club { // the club info structre
     name: string;
     url:string;
@@ -38,14 +46,29 @@ const clubs = firebase.firestore().collection('clubs'); // the clubs collection
 const menu = firebase.firestore().collection('menu'); // the menu products cllection
 const curr_user = firebase.auth().currentUser; // the current user
 
+const products: Product[] = [];
+
+// get menu of the club by club id
+export const getMenu = async (clubName: string) => {
+    const id = await getClubIdByName(clubName);
+    await firebase.firestore().collectionGroup('menu').get().then((querySnapshot) => {
+        querySnapshot.forEach(snapshot => {
+            const temp_product = snapshot.data() as Product;
+            if ( temp_product.clubID === id ) {
+                products.push(temp_product);
+            }
+        });
+    });
+    return products;
+}
 
 // sign in with google
-const signinWithGoogle = async () => {
+export const signinWithGoogle = async () => {
 
 }
 
 //sign in with apple
-const signInWithApple = async () => {
+export const signInWithApple = async () => {
 
 }
 

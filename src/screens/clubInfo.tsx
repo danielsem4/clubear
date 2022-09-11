@@ -56,7 +56,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     // navigate to table order screen
     const tableOrder = () => {
         if (screenState.logedIn) {
-            props.navigation.navigate('pickDate', {theClub: club});
+            props.navigation.navigate('pickDate', {theClub: club.theClub});
         } else {
             Alert.alert("You need to login to order a table");
         }
@@ -188,7 +188,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     clubInfoWrapper: {
         flexDirection: 'column',

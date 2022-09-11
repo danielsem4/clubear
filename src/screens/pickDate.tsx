@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView } from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import {LinearGradient} from 'expo-linear-gradient';
 import { Input, Button } from "../components";
@@ -96,11 +96,11 @@ const PickDate : FC<ClubsParameters> = (props) => {
                 <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
                     <Text style={style.describeText}>Please choose the date</Text>
                 </TouchableOpacity>
-                <View style={{flexDirection: 'column', justifyContent: 'space-around', alignItems: 'center', height: '80%'}}>
+                <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '80%'}}>
                     <View>
-                        <Button title="Pick Date" color2='#021925' color1='#537895' onPress={() => setShowDatePickerVisibility(true) } />
+                        <Button smallButton={false} title="Pick Date" color2='#021925' color1='#537895' onPress={() => setShowDatePickerVisibility(true) } />
                         <Text style={{color: 'white', fontSize: 30, textAlign: 'center'}}>Your selected date is</Text>
-                        <Text style={{color: 'white', fontSize: 30, textAlign: 'center', marginBottom: '30%'}}> {dateToShow} ? </Text>
+                        <Text style={{color: 'white', fontSize: 30, textAlign: 'center', marginBottom: '10%'}}> {dateToShow} ? </Text>
                     </View>
                     <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <DateTimePickerModal
@@ -111,10 +111,10 @@ const PickDate : FC<ClubsParameters> = (props) => {
                          style={{backgroundColor: '#333333'}}
                         />
                     </View>
-                    <View>
-                        
+                    <ImageBackground source={require('../assets/selena_line.png')} style={{height: '63%', width}} />
+                    <View style={{marginBottom: '5%'}}>
+                        <Button smallButton={false} title="Next" color2='#021925' color1='#537895' onPress={() => props.navigation.navigate('guestAmount', {theClub: club.theClub, day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()})} />
                     </View>
-                    <Button title="Next" color2='#021925' color1='#537895' onPress={() => props.navigation.navigate('guestAmount', {theClub: club, day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()})} />
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>
@@ -127,7 +127,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     container: {
         flex: 1,

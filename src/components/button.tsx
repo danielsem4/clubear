@@ -9,15 +9,16 @@ interface Props {
     title: string;
     color1: string;
     color2: string;
+    smallButton: boolean;
     onPress: () => void;
 }
 
 // used smallSize to indicate if the button i need is small or big
 const Button : FC<Props> = (props) => {
     return(
-        <LinearGradient colors={[props.color1, props.color2]} style={style.bigButtonContainer} >
-            <TouchableOpacity onPress={props.onPress} style={style.bigButtonContainer}>
-                <Text style={style.bigButtonText}>{props.title}</Text>
+        <LinearGradient colors={[props.color1, props.color2]} style={props.smallButton === false ?  style.bigButtonContainer : style.smallButtonContainer} >
+            <TouchableOpacity onPress={props.onPress} style={props.smallButton === false ?  style.bigButtonContainer : style.smallButtonContainer}>
+                <Text style={props.smallButton === false ? style.bigButtonText : style.smallButtonText}>{props.title}</Text>
             </TouchableOpacity>
         </LinearGradient>
     );
@@ -33,7 +34,6 @@ const style = StyleSheet.create({
         borderRadius: 10,
         width: width / 1.5,
         marginTop: '2%'
-
     },
     bigButtonText: {
         color: '#fff',
@@ -41,19 +41,17 @@ const style = StyleSheet.create({
         fontWeight: '700'
     },
     smallButtonContainer: {
-        backgroundColor: 'black',
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10,
-        height: height / 20,
+        padding: 5,
+        height: height / 16,
         borderRadius: 10,
-        width: width / 3,
-        marginTop: 1
-
+        width: width / 3.5,
+        marginTop: '2%'
     },
     smallButtonText: {
         color: '#fff',
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '700'
     }
 })

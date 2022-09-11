@@ -1,35 +1,45 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import  ClubsScroll  from './clubsScroll';
+import  Product  from './product';
 
 interface ProductProps {
     navigation: string;
     productCategory: string;
+    tableMinPrice: number;
     product: {
         category: string;
         clubID: string;
         name: string;
-        price: string;
+        price: number;
         productPictureUrl: string;
+        describe: string;
     }[];
 }
 
-const ClubsByCity : FC<ProductProps> = (props) => {
+const ProductByCategory : FC<ProductProps> = (props) => {
 
-    const sortedClubs = props.product.filter((product) => product.category === props.productCategory);
+    useEffect(() => {
+        console.log("useeffect productbycategory");
+        
+    });
+
+    const sortedProducts = props.product.filter((product) => product.category === props.productCategory);
+    
     return(
         <View style={style.clubsContainer}>
-            {/* <  navigation={props.navigation} clubLocation={props.productCategory}  /> */}
+            <Product tableMinPrice={props.tableMinPrice} navigation={props.navigation} productCategory={props.productCategory} product={sortedProducts} />
         </View>
     )
 }
 
-export default ClubsByCity;
+export default ProductByCategory;
 
 const style = StyleSheet.create({
     clubsContainer: {
         borderBottomWidth: 0,
         shadowOpacity: 0,
+        
+
     },
     flatListClubNameStyle: {
         fontSize: 20,

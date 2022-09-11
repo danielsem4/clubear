@@ -1,29 +1,51 @@
 import React, { FC, useState, useEffect } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, Image, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, TouchableOpacity, Image, FlatList } from 'react-native';
 import Amount from 'react-native-vector-icons/Feather';
-import Icons from 'react-native-vector-icons/FontAwesome';
-import { Button, OrderBox } from "../components";
-import { Route, useNavigation, useRoute } from '@react-navigation/native';
-import * as firebaseFunctions from '../constants/firebaseauth';
+
 
 const {height, width} = Dimensions.get('screen');
 
 interface ProductProps {
     navigation: string;
     productCategory: string;
+    tableMinPrice: number;
+
     product: {
         category: string;
         clubID: string;
         name: string;
-        price: string;
+        price: number;
         productPictureUrl: string;
+        describe: string;
     }[];
 }
 
 
 const Product : FC<ProductProps> = (props) => {
 
-    
+    useEffect(() => {
+        console.log("useeffect productb");
+        
+    })
+
+    const minus = (price: number) => {
+        if (amountOfProducts > 0) {
+            setAmountOfProducts(amountOfProducts - 1);
+            setOrderPrice(orderPrice - price);
+            console.log(orderPrice);
+        }  
+    }
+
+    const add = (price: number, id: string) => {
+        setAmountOfProducts(amountOfProducts + 1);
+        setOrderPrice(orderPrice + price);
+        console.log(orderPrice);
+        console.log(id);
+    }
+
+    const [amountOfProducts, setAmountOfProducts] = useState<number>(0);
+    const [orderPrice, setOrderPrice] = useState<number>(0);
+
     return (
         <View>
             <Text style={style.flatListClubCity}>{props.productCategory}</Text>
@@ -34,24 +56,25 @@ const Product : FC<ProductProps> = (props) => {
             ListFooterComponent={<View style={{height: 20}}/>}
             renderItem={({item}) => {
                 return(
-                    <View style={{width, height: height / 5.5, alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={style.menuCardStyle}>
-                        <View style={{marginLeft: '2%'}}>
-                            <Text style={{color: 'white', fontSize: 24, marginBottom: '12%'}}>Beluga</Text>
-                            <Text style={{color: 'white', fontSize: 22, marginBottom: '5%'}}>Price: 800₪</Text>
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '40%'}}>
-                                <TouchableOpacity >
-                                    <Amount name="minus" size={26} style={{color: 'white', marginTop: '5%'}} />
-                                </TouchableOpacity>
-                                <Text style={{color: 'white', fontSize: 24}}>0</Text>
-                                <TouchableOpacity >
-                                    <Amount name="plus" size={26} style={{color: 'white', marginTop: '5%'}} />
-                                </TouchableOpacity>
+                    <ImageBackground imageStyle={{ borderRadius: 22, width: '90%', marginLeft: '5%' }} source={require('../assets/card33.png')} style={{width, height: height / 5.8, alignItems: 'center', justifyContent: 'center', marginBottom: '5%'}}>
+                        <View style={style.menuCardStyle}>
+                            <View style={{flex: 1, height: '100%',marginLeft: '2%', flexDirection: 'column', justifyContent: 'space-between'}}>
+                                <Text style={{color: '#e6e6e6', fontSize: 24, fontWeight: 'bold'}}>{item.name}</Text>
+                                <Text style={{color: '#e6e6e6', fontSize: 18}}>{item.describe}</Text>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '40%', marginBottom: '5%'}}>
+                                    <Text style={{color: '#e6e6e6', fontSize: 22, fontWeight: 'bold', marginRight: '15%'}}>{item.price} ₪</Text>
+                                    <TouchableOpacity onPress={() => minus(item.price)}>
+                                        <Amount name="minus" size={26}  style={{color: 'silver', marginTop: '5%', marginRight: '10%'}} />
+                                    </TouchableOpacity>
+                                    <Text style={{color: '#e6e6e6', fontSize: 24, fontWeight: 'bold'}}>{amountOfProducts}</Text>
+                                    <TouchableOpacity onPress={() => add(item.price, item.name)}>
+                                        <Amount name="plus" size={26} style={{color: 'silver', marginTop: '5%', marginLeft: '10%'}} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                            <Image source={{uri: item.productPictureUrl}} style={{aspectRatio: 2 / 2, width: '30%'}} />
                         </View>
-                        <Image source={require('../assets/beluga_witout_background.png')} style={{width: '30%', height: height / 6.5}} />
-                    </View>
-                </View>
+                    </ImageBackground>
                  )
              }}
             />
@@ -63,7 +86,7 @@ export default Product;
 
 const style = StyleSheet.create({
     flatListClubCity: {
-        fontSize: 20,
+        fontSize: 24,
         color: 'lightblue',
         marginRight: '73%',
         marginTop: '5%',
@@ -82,9 +105,8 @@ const style = StyleSheet.create({
         },
         shadowOpacity: 0.75,
         elevation: 15,
-        backgroundColor: '#262626',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        
     }
-
 });

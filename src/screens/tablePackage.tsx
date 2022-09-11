@@ -34,10 +34,12 @@ interface OrderParams { // order details
 const {height, width} = Dimensions.get('screen');
 
 const TablePackage : FC<OrderParams> = (props) => {
-
+    
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
+
+    const [tableMinPrice, setTableMinPrice] = useState<number>(0);
 
     // box where you select the deals
     const deal = (color: string, table: string, peopleAmount: string, price: string) => {
@@ -66,15 +68,17 @@ const TablePackage : FC<OrderParams> = (props) => {
                     </View>
                 </LinearGradient>
                 <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
-                    <Text style={style.describeText}>Please choose your table</Text>
+                    <Text style={style.describeText}>Please choose your table </Text>
                 </TouchableOpacity>
-                <View style={{flexDirection: 'column'}}>
-                    <ImageBackground style={{width: '100%', height: '65%'}} source={require('../assets/clubMap.png')} />
-                    <View style={{flex: 1, flexDirection: 'column', }}>
-                        <OrderBox tableType="Regular" color="#009adf" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
-                        <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
-                        <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber})} />
+                <View style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
+                    <View style={{flex: 1, flexDirection: 'column'}}>
+                        <OrderBox tableType="Regular" color="#009adf" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 2500})} />
+                        <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 3200})} />
+                        <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 4500})} />
                     </View>
+                   
+                        <ImageBackground style={{width: '100%', height: '55%', marginTop: '20%'}} source={require('../assets/clubMap.png')} />
+                    
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>
@@ -87,7 +91,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     container: {
         flex: 1,

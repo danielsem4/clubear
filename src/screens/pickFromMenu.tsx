@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from "react";
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, Image } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Alert, TouchableOpacity, Keyboard, KeyboardAvoidingView, Image, FlatList } from 'react-native';
 import BackIcon from 'react-native-vector-icons/Ionicons';
 import Amount from 'react-native-vector-icons/Feather';
 import {LinearGradient} from 'expo-linear-gradient';
@@ -7,7 +7,7 @@ import 'firebase/compat/auth';
 import firebase from 'firebase/compat/app';
 import '../constants/firebase'
 import Icons from 'react-native-vector-icons/FontAwesome';
-import { Button, OrderBox } from "../components";
+import { Button, OrderBox, Product, ProductByCategory } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
@@ -15,8 +15,9 @@ interface Product {
     category: string;
     clubID: string;
     name: string;
-    price: string;
+    price: number;
     productPictureUrl: string;
+    describe: string;
 }
 
 interface OrderParams { // order details
@@ -25,6 +26,7 @@ interface OrderParams { // order details
     month: number;
     year: number;
     phoneNumber: string;
+    tableMinPrice: number;
     theClub: {
         name: string;
         imageUrl: string;
@@ -54,19 +56,31 @@ const PickFromMenu : FC<OrderParams> = (props) => {
     const [productCategory, setProductCategory] = useState<string[]>(['']); // the product category
 
     useEffect(() => { // get the clubs menu items
+        console.log("pick from menu useeffect");
         const getProducts = async () => {
+            const id = await firebaseFunctions.getClubIdByName(order.theClub.name);
             await firebase.firestore().collectionGroup('menu').get().then((querySnapshot) => {
                 querySnapshot.forEach(snapshot => {
-                    products.push(snapshot.data() as Product);
+                    const temp_product = snapshot.data() as Product;
+                    if ( temp_product.clubID === id ) {
+                        products.push(temp_product);
+                    }
                 });
                 setProducts([...products]);
             }).then(() => {
                 setProductCategory(Array.from(new Set(products.map(products => products.category))));
             });
-            console.log(products);
         }
         getProducts();
-    }, [])
+    }, []);
+
+    const topScreen = () => {
+        return (
+            <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
+                <Text style={style.describeText}>Please build your order dont forget you have min price order of {order.tableMinPrice}₪</Text>
+            </TouchableOpacity>
+        )
+    }
     
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
@@ -78,29 +92,23 @@ const PickFromMenu : FC<OrderParams> = (props) => {
                         <View></View>
                     </View>
                 </LinearGradient>
-                <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
-                    <Text style={style.describeText}>Please build your order</Text>
-                </TouchableOpacity>
-                <View style={{width, height: height / 5.5, alignItems: 'center', justifyContent: 'center'}}>
-                    <View style={style.menuCardStyle}>
-                        <View style={{marginLeft: '2%'}}>
-                            <Text style={{color: 'white', fontSize: 24, marginBottom: '12%'}}>Beluga</Text>
-                            <Text style={{color: 'white', fontSize: 22, marginBottom: '5%'}}>Price: 800₪</Text>
-                            <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '40%'}}>
-                                <TouchableOpacity >
-                                    <Amount name="minus" size={26} style={{color: 'white', marginTop: '5%'}} />
-                                </TouchableOpacity>
-                                <Text style={{color: 'white', fontSize: 24}}>0</Text>
-                                <TouchableOpacity >
-                                    <Amount name="plus" size={26} style={{color: 'white', marginTop: '5%'}} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <Image source={require('../assets/beluga_witout_background.png')} style={{width: '30%', height: height / 6.5}} />
-                    </View>
-                </View>
-                <View style={{alignItems: 'center', alignSelf: 'center', marginTop: '3%'}}>
-                    <Button color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment')} />
+                <View style={style.flatListContainer}> 
+                    <FlatList
+                     ListHeaderComponent={topScreen}
+                     style={{ flexGrow: 1 }}
+                     keyExtractor={(_, index) => index.toString()}
+                     data={productCategory}
+                     ListFooterComponent={<View style={{height: 20}}/>}
+                     renderItem={({item}) => {
+                        return(
+                            <ProductByCategory tableMinPrice={order.tableMinPrice} productCategory={item} product={products} navigation={props.navigation} />
+                        );
+                    }}
+                    />
+                </View> 
+                <View style={{width, alignItems: 'center', alignSelf: 'center', marginBottom: '10%', flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                    <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment')} />
+                    <Button smallButton={true} color1='#021925' color2='#537895' title='0₪' onPress={() => props.navigation.navigate('payment')} />
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>
@@ -113,7 +121,7 @@ const style = StyleSheet.create({
     imageBackgroundContainer: { // background image container for the home screen
         flex: 1,
         width: '100%',
-        height: height
+        height: height / 0.99
     },
     container: {
         flex: 1,
@@ -174,5 +182,10 @@ const style = StyleSheet.create({
         backgroundColor: '#262626',
         flexDirection: 'row',
         justifyContent: 'space-between'
-    }
+    },
+    flatListContainer: {  // the flat list wrapper
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });
