@@ -14,9 +14,11 @@ interface OrderParams { // order details
     month: number;
     year: number;
     phoneNumber: string;
+    maleAmount: number;
+    femaleAmount: number;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -72,9 +74,9 @@ const TablePackage : FC<OrderParams> = (props) => {
                 </TouchableOpacity>
                 <View style={{flex: 1, flexDirection: 'column', justifyContent: 'space-between'}}>
                     <View style={{flex: 1, flexDirection: 'column'}}>
-                        <OrderBox tableType="Regular" color="#009adf" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 2500})} />
-                        <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 3200})} />
-                        <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 4500})} />
+                        <OrderBox tableType="Regular" color="#009adf" price={2500} peopleAmount={5} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 2500, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
+                        <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 3200, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
+                        <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 4500, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
                     </View>
                    
                         <ImageBackground style={{width: '100%', height: '55%', marginTop: '20%'}} source={require('../assets/clubMap.png')} />

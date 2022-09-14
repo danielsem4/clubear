@@ -15,7 +15,7 @@ interface OrderParams { // order details
     year: number;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -62,7 +62,7 @@ const GuestAmount : FC<OrderParams> = (props) => {
     const next = async () => {
         if (maleAmount + femaleAmount >= 5) {
             if (verifyPhoneNumber()) {
-                props.navigation.navigate('tablePackage', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: phone})
+                props.navigation.navigate('tablePackage', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: phone, maleAmount: maleAmount, femaleAmount: femaleAmount})
             } // phone number check
         } // guest amount check 
         else {

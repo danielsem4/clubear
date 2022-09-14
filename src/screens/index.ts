@@ -13,6 +13,7 @@ import GuestAmount from "./guestAmount";
 import TablePackage from "./tablePackage";
 import PickFromMenu from "./pickFromMenu";
 import Payment from "./payment";
+import OrderDetails from "./orderDetails";
 
 
 
@@ -20,4 +21,4 @@ export {SignUp, Login, Home, About,
         ClubInfo, ForgotPassword, AppLoader,
         Settings, Admin, Menu, PickDate,
         GuestAmount, TablePackage, PickFromMenu,
-        Payment }
+        Payment, OrderDetails }

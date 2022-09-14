@@ -27,9 +27,11 @@ interface OrderParams { // order details
     year: number;
     phoneNumber: string;
     tableMinPrice: number;
+    maleAmount: number;
+    femaleAmount: number;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -51,6 +53,8 @@ const PickFromMenu : FC<OrderParams> = (props) => {
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
+
+    console.log(order.tableMinPrice);
 
     const [products, setProducts] = useState<Product[]>([]); // the club products
     const [productCategory, setProductCategory] = useState<string[]>(['']); // the product category
@@ -107,8 +111,8 @@ const PickFromMenu : FC<OrderParams> = (props) => {
                     />
                 </View> 
                 <View style={{width, alignItems: 'center', alignSelf: 'center', marginBottom: '10%', flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                    <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment')} />
-                    <Button smallButton={true} color1='#021925' color2='#537895' title='0₪' onPress={() => props.navigation.navigate('payment')} />
+                    <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
+                    {/* <Button smallButton={true} color1='#021925' color2='#537895' title='0₪' onPress={() => {}} /> */}
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>

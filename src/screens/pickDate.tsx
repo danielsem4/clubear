@@ -12,7 +12,7 @@ interface ClubsParameters {
     navigation: any;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -36,6 +36,8 @@ const PickDate : FC<ClubsParameters> = (props) => {
     const route = useRoute();
     const club = route.params as ClubsParameters;
     const navigation = useNavigation();
+
+    console.log(club.theClub);
     
 
     const [date, setDate] = useState<Date>(new Date()); // the date

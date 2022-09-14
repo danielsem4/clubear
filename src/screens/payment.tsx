@@ -20,9 +20,11 @@ interface OrderParams { // order details
     month: number;
     year: number;
     phoneNumber: string;
+    maleAmount: number;
+    femaleAmount: number;
     theClub: {
         name: string;
-        imageUrl: string;
+        url: string;
         map_url: string;
         menu_url: string;
         city: string;
@@ -43,17 +45,20 @@ const Payment : FC<OrderParams> = (props) => {
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
 
+    console.log(order.theClub);
+    
+
     const [cardNumber, setCardNumber] = useState<string>('4580 1059 1234 ****'); // card number
     const [cardHolderName, setHolderName] = useState<string>('Israel Israeli'); // card holder name
     const [cardExpired, setCardExpired] = useState<string>('MM/YY'); // card date of expire
     const [cardCvv, setCardCvv] = useState<string>('000'); // 3 numbers behind the card
     
 
-    const checkCardInputValidation = () => {
-        if (cardCvv.length === 3 && cardHolderName !== '' && cardNumber.length === 19) {
+    // const checkCardInputValidation = () => {
+    //     if (cardCvv.length === 3 && cardHolderName !== '' && cardNumber.length === 19) {
             
-        }
-    }
+    //     }
+    // }
 
     const cardBrand = () => {
         if (cardNumber[0] === '4') {
@@ -108,7 +113,7 @@ const Payment : FC<OrderParams> = (props) => {
                         </View>
                     </View>
                     <View style={{alignItems: 'center', marginTop: '5%'}}>
-                        <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={()  =>  {}} />
+                        <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={()  =>  props.navigation.navigate('orderDetails', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
                     </View>
                 </View>
             </ImageBackground>
