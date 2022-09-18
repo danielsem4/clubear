@@ -1,5 +1,5 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Dimensions, Animated, Alert, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Animated, Alert, FlatList, Image } from 'react-native';
 import 'firebase/compat/auth';
 import firebase from 'firebase/compat/app';
 import '../constants/firebase'
@@ -145,6 +145,27 @@ const Home : FC<Props> = (props) => {
         )
     }
 
+    const language = () => {
+        Alert.alert(
+            'Choose the language',
+            '',
+            [
+                {
+                    text: 'English',
+                    onPress: () => {
+                        console.log('English');
+                    }
+                },
+                {
+                    text: 'Hebrew',
+                    onPress: () => {
+                        console.log('Hebrew');
+                    }
+                }
+            ]
+        )
+    }
+
     return(
         <View style={style.container}>
             <ImageBackground source={require('../assets/sidebar_pic3.jpg')} style={style.sidebarBackGroundContainer}>
@@ -155,21 +176,22 @@ const Home : FC<Props> = (props) => {
                     <SidebarButton 
                         iconName='login'
                         iconColor='#fff'
-                        buttonColor='#b3b3ff'
+                        buttonColor='#FFFAFA'
                         title='login'
                         onPress={() => props.navigation.navigate('login')}
                         />
                     </View>
                     :
                     <View style={style.welcomeContainer}>
-                        <Text style={style.wolcomeTextStyle}>Welcome party man lets hang out tonight</Text>
+                        <Image source={require('../assets/1.png')} style={{width: 120, height: 120, borderRadius: 400 / 2}} />
+                        <Text style={style.wolcomeTextStyle}>Welcome</Text>
                     </View>
                     }   
                     <View style={style.navigationButtonWrapper}>
                         <SidebarButton 
                         iconName='info-outline'
                         iconColor='#fff'
-                        buttonColor='#b3b3ff'
+                        buttonColor='#FFFAFA'
                         title='About'
                         onPress={() => {
                             props.navigation.navigate('appLoader');
@@ -177,28 +199,66 @@ const Home : FC<Props> = (props) => {
                         }}
                         />
                         <SidebarButton 
-                        iconName='settings'
+                        iconName='language'
                         iconColor='#fff'
-                        buttonColor='#b3b3ff'
-                        title='Settings'
-                        onPress={() => props.navigation.navigate('settings')}
+                        buttonColor='#FFFAFA'
+                        title='Language'
+                        onPress={() => {
+                            language()
+                        }}
                         />
+                        <SidebarButton 
+                        iconName='copyright'
+                        iconColor='#fff'
+                        buttonColor='#FFFAFA'
+                        title='Terms'
+                        onPress={() => {
+                            props.navigation.navigate('appLoader');
+                            props.navigation.navigate('about');
+                        }}
+                        />
+                        {screenState.logedIn  ?
+                        <SidebarButton 
+                        iconName='remove-red-eye'
+                        iconColor='#FFFAFA'
+                        buttonColor='#b3b3ff'
+                        title='Set password'
+                        onPress={() => {
+                            props.navigation.navigate('appLoader');
+                            props.navigation.navigate('about');
+                        }}
+                        />
+                        :
+                        <View>
+                            
+                        </View>
+                        }  
                     </View>
-                    {screenState.logedIn  ?
-                    <View style={style.logOutButtnonWrapper}>
+                    <View style={style.logOutAndSupportWrapper}>
+                        <SidebarButton 
+                            iconName='support-agent'
+                            iconColor='#FFFAFA'
+                            buttonColor='#b3b3ff'
+                            title='Support'
+                            onPress={() => {
+                                props.navigation.navigate('appLoader');
+                                props.navigation.navigate('about');
+                        }}
+                        />
+                        {screenState.logedIn  ?
                         <SidebarButton 
                             iconName='logout'
-                            iconColor='#fff'
+                            iconColor='#FFFAFA'
                             buttonColor='#b3b3ff'
                             title='Logout'
                             onPress={logout}
-                            />
-                    </View>
-                    :
-                    <View>
+                        />
+                        :
+                        <View>
 
+                        </View>
+                        }  
                     </View>
-                    }  
                 </View>       
             </ImageBackground>
             <Animated.View style={[style.homeContainer, {transform: [
@@ -365,8 +425,9 @@ const style = StyleSheet.create({
     },
     sidebarContainer: { // the side bar container 
          flexDirection: 'column',
-         justifyContent: 'flex-start',
-         height: '82%',
+         justifyContent: 'space-around',
+         height: '90%',
+         
     },
     sidebarBackGroundContainer: { // background image container for the sidebar screen
         flex: 1,
@@ -375,27 +436,33 @@ const style = StyleSheet.create({
     },
     welcomeContainer: { // the name display container on the side bar
         alignSelf: 'flex-start',
-        width: '50%',
-        marginTop: '20%',
-        marginLeft: '1%'
+        width: '40%',
+        marginTop: '5%',
+        alignItems: 'center'
     },
     wolcomeTextStyle: { // the name style
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 18,
+        fontSize: 20,
         textTransform: 'uppercase',
-        marginLeft: '2%',
+        marginLeft: '5%',
+        marginTop: '5%'
+        
     },
     loginButtonWrapper: { // login button wrapper (sidebar)
         marginLeft: '2%',
-        marginTop: '20%'
+        marginTop: '5%'
     },
     navigationButtonWrapper: {  // the other 3 buttons (sidebar)
         marginLeft: '2%',
-        marginTop: '20%'
+        marginTop: '10%'
+    },
+    logOutAndSupportWrapper: {// logout and support buttones wrapper (sidebar)
+        marginTop: '10%',
+        marginLeft: '2%'
     },
     logOutButtnonWrapper: { // logout button wrapper (sidebar)
-        marginTop: '30%',
+        marginTop: '10%',
         marginLeft: '2%'
     },
 })

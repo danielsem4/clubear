@@ -40,11 +40,11 @@ const style = StyleSheet.create({
         borderRadius: 10,
         width: width / 3.3,
         marginRight: '60%',
-        marginBottom: '10%',
+        marginBottom: '5%',
     },
     buttonText: {
-        fontSize: 22,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontWeight: '700',
     },
     buttonWrapper: {
         flex: 1,

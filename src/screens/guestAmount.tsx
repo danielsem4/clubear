@@ -142,7 +142,7 @@ const GuestAmount : FC<OrderParams> = (props) => {
                         </TouchableOpacity>
                         <View style={{marginBottom: '5%',}}>
                             <NumericInput maxLenght={10} shortInput={false} placeholder='Phone number*' iconName='mobile1' onChangeText={(text) => setPhone(text)} />
-                            <Input shortInput={false} placeholder='Instegram Account Name*' iconName='instagram' onChangeText={(text) => setInstegram(text)} />
+                            <Input shortInput={false} placeholder='Facebook Account Name*' iconName='facebook-square' onChangeText={(text) => setInstegram(text)} />
                         </View>
                     </View>
                     <View style={{alignItems: 'center'}}>

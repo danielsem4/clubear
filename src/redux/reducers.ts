@@ -11,7 +11,7 @@ export type UserState = {
 const initialState : UserState = {
     user: '',
     logedIn: false,
-    language: false,
+    language: false, // false == English, true == Hebrew
     admin: false,
     load: true  // the load value is opposite to the screen state!!
 };
