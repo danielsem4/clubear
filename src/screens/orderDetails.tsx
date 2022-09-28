@@ -5,8 +5,11 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Icons from 'react-native-vector-icons/Ionicons';
 import { Button } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/orderReducer';
 import * as firebaseFunctions from '../constants/firebaseauth';
-import moment from "moment";
 import QRCode from 'react-native-qrcode-svg';
 
 interface OrderParams { // order details
@@ -38,22 +41,24 @@ const {height, width} = Dimensions.get('screen');
 
 const OrderDetails : FC<OrderParams> = () => {
 
+    const dispatch = useDispatch(); // exe for redux functions
+    const menuState = useSelector((state: RootState) => state.menu); // get the states from redux
+
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
 
-    const [dateToShow, setDateToShow] = useState<string>(moment(Date.now()).format('DD/MM/YYYY')); // selected day confirm
 
-    let date = new Date(`${order.day}/${order.month}/${order.year}`);
+    let data =`date - ${order.day}/${order.month}/${order.year},
+               clubName - ${order.theClub.name},
+               city - ${order.theClub.city},
+               Gate Open - 11 PM / 23:00,
+               male - ${order.maleAmount},
+               female - ${order.femaleAmount},
+               Order phone number - ${order.phoneNumber},
+               Your order - ${menuState.products[1].name} ${menuState.products[1].quantity}`
     
     
-
-    // make the dateToShow updated in time
-    useEffect(() => {
-        setDateToShow(moment(date).format('DD/MM/YYYY'));
-    },[]);
-
-
     const details = (iconName: string, theDetails: string | number, details: string) => {
         return (
             <View style={style.clubInfoAndIconWrapper}>
@@ -67,7 +72,7 @@ const OrderDetails : FC<OrderParams> = () => {
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
                         <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => navigation.goBack()}/>
                         <Text style={style.headline}>Order details</Text>
@@ -81,9 +86,9 @@ const OrderDetails : FC<OrderParams> = () => {
                         <Text style={{color: 'white', fontSize: 22, padding: 2, textAlign: 'center'}}>all your details are in this QR</Text>
                         <View style={{alignSelf: 'center', marginTop: '5%', alignContent: 'center', alignItems: 'center'}}>
                             <Text style={{color: 'white', fontSize: 22, padding: 2, textAlign: 'center'}}>Take a screen shot </Text>
-                            <QRCode size={200} value={"אם סרקת את זה אתה כנראה גיי גיי גיי גיי"} />
+                            <QRCode size={200} value={data} />
                             <View style={{alignItems: 'center', alignContent: 'center', marginTop: '5%'}}>
-                                <Button title="Details" color1="#021925" color2="#537895" onPress={() => {}} smallButton={false} />
+                                <Button title="Details" color1="#09203F" color2="#428399" onPress={() => {}} smallButton={false} />
                             </View>
                         </View> 
                     </View>

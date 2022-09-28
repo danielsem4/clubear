@@ -75,7 +75,7 @@ const ClubInfo : FC<ClubsParameters> = (props) => {
     return(
         <View style={style.mainContainer}>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-            <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+            <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                 <View style={style.headerContainer}>
                     <BackIcon name="arrow-back" size={40} style={style.backIcon} onPress={() => navigation.goBack()}/>
                     <Text style={style.clubName}>{club.theClub['name']}</Text>

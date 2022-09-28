@@ -77,7 +77,7 @@ const Payment : FC<OrderParams> = (props) => {
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
                         <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => navigation.goBack()}/>
                         <Text style={style.headline}>Paymant</Text>
@@ -113,7 +113,7 @@ const Payment : FC<OrderParams> = (props) => {
                         </View>
                     </View>
                     <View style={{alignItems: 'center', marginTop: '5%'}}>
-                        <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={()  =>  props.navigation.navigate('orderDetails', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
+                        <Button smallButton={false} color1="#09203F" color2="#428399" title='continue' onPress={()  =>  props.navigation.navigate('orderDetails', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
                     </View>
                 </View>
             </ImageBackground>

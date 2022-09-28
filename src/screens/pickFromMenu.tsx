@@ -6,8 +6,11 @@ import {LinearGradient} from 'expo-linear-gradient';
 import 'firebase/compat/auth';
 import firebase from 'firebase/compat/app';
 import '../constants/firebase'
-import Icons from 'react-native-vector-icons/FontAwesome';
-import { Button, OrderBox, Product, ProductByCategory } from "../components";
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/orderReducer';
+import { Button, OrderBox, Product, ProductByCategory, PopUp } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
 import * as firebaseFunctions from '../constants/firebaseauth';
 
@@ -50,14 +53,20 @@ const {height, width} = Dimensions.get('screen');
 
 const PickFromMenu : FC<OrderParams> = (props) => {
 
+    const dispatch = useDispatch(); // exe for redux functions
+    const menuState = useSelector((state: RootState) => state.menu); // get the states from redux
+
     const route = useRoute();
     const order = route.params as OrderParams; // order details 
     const navigation = useNavigation();
 
-    console.log(order.tableMinPrice);
-
     const [products, setProducts] = useState<Product[]>([]); // the club products
-    const [productCategory, setProductCategory] = useState<string[]>(['']); // the product category
+    const [productCategory, setProductCategory] = useState<string[]>([]); // the product category
+    const [confirmation, setConfirmation] = useState<boolean>(false) // user Confirmation of the order details.
+
+    const [popUpConfirm, setPopUpConfirm] = useState<boolean>(false); // control the pop up with the buttons 
+    const [popUp, setPopUp] = useState<boolean>(false) // control the pop up without the buttnos
+    const [content, setContent] = useState<number>(0); // the content on the pop up 
 
     useEffect(() => { // get the clubs menu items
         console.log("pick from menu useeffect");
@@ -74,10 +83,12 @@ const PickFromMenu : FC<OrderParams> = (props) => {
             }).then(() => {
                 setProductCategory(Array.from(new Set(products.map(products => products.category))));
             });
+            dispatch(useActions.updateMenuState())
         }
-        getProducts();
+        menuState.gotProducts ? {} : getProducts(); 
     }, []);
 
+    // the describe ot the top
     const topScreen = () => {
         return (
             <TouchableOpacity style={style.describe} onPress={Keyboard.dismiss}>
@@ -85,13 +96,32 @@ const PickFromMenu : FC<OrderParams> = (props) => {
             </TouchableOpacity>
         )
     }
+
+    // confirm the order
+    const confirmOrder = () => {
+        setConfirmation(true);
+        setPopUpConfirm(false);
+        props.navigation.navigate('payment', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount});
+    }
+
+    
+    // check if the order is valid
+    const checkOrder = () => {
+        if(order.tableMinPrice > menuState.totalPrice) {
+            setContent(6);
+            setPopUp(true);
+        } else {
+            setContent(7);
+            setPopUpConfirm(true);
+        }
+    }
     
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
-                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => navigation.goBack()}/>
+                        <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() =>  {{dispatch(useActions.setNewCart()); dispatch(useActions.updateMenuState()); navigation.goBack()}}}/>
                         <Text style={style.headline}>Order Build</Text>
                         <View></View>
                     </View>
@@ -111,10 +141,12 @@ const PickFromMenu : FC<OrderParams> = (props) => {
                     />
                 </View> 
                 <View style={{width, alignItems: 'center', alignSelf: 'center', marginBottom: '10%', flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                    <Button smallButton={false} color1='#021925' color2='#537895' title='continue' onPress={() => props.navigation.navigate('payment', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
-                    {/* <Button smallButton={true} color1='#021925' color2='#537895' title='0₪' onPress={() => {}} /> */}
+                    <Button smallButton={false} color1='#09203F' color2='#428399' title='continue' onPress={() => checkOrder()} />
+                    <Button smallButton={true} color1={ order.tableMinPrice > menuState.totalPrice ? '#bfbfbf' : '#09203F' } color2={ order.tableMinPrice > menuState.totalPrice ? '#333333' : '#428399' } title={String(menuState.totalPrice + ' ₪')} onPress={() => {}} />
                 </View>
             </ImageBackground>
+            <PopUp price={order.tableMinPrice} button={true} visible={popUpConfirm} onPress={() => setPopUpConfirm(false)} age={Number(order.theClub.age)} content={content} onPressOk={() => confirmOrder()} />
+            <PopUp visible={popUp} onPress={() => setPopUp(false)} age={Number(order.theClub.age)} price={order.tableMinPrice} content={content} onPressOk={() => {}} />
         </KeyboardAvoidingView>
     );
 }

@@ -64,8 +64,9 @@ const Home : FC<Props> = (props) => {
             }).then(() => {
                 setClubsCities(Array.from(new Set(clubs.map(club => club.city))));
             })
+            dispatch(useActions.updateGotClubsState()); // update that i took the clubs from the firebase
         }
-        getClubs();
+        screenState.gotClubs ? {} : getClubs(); // check if i pulled the clubs from the firebase
     }, [])
 
     // search club function
@@ -266,7 +267,7 @@ const Home : FC<Props> = (props) => {
             ]}
             ]}>
                 <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                    <LinearGradient colors={['#021925', '#537895']} style={searchButton ? [style.topBarStyle, {height: '10%'}] : style.topBarStyle}>
+                    <LinearGradient colors={['#09203F', '#428399']} style={searchButton ? [style.topBarStyle, {height: '10%'}] : style.topBarStyle}>
                         {!searchButton ?
                         <View style={style.headerStyle}>
                             <Icons name= { showMenu ? 'close' : 'bars' } size={30} style={style.barStyle} onPress={barsHandler} />

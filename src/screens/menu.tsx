@@ -20,7 +20,7 @@ const Menu : FC<Props> = (props) => {
     
     return(
         <View style={styles.container}>
-             <LinearGradient colors={['#021925', '#537895']} style={styles.headerWrapper}>
+             <LinearGradient colors={['#09203F', '#428399']} style={styles.headerWrapper}>
                     <View style={styles.headerContainer}>
                         <View></View>
                         <Text style={{color: 'white', fontSize: 28, marginTop: '6%', marginRight: '8%'}}> Menu </Text>

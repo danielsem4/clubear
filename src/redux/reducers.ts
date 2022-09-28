@@ -5,7 +5,8 @@ export type UserState = {
     logedIn: boolean,
     load: boolean,
     language: boolean,
-    admin: boolean
+    admin: boolean,
+    gotClubs: boolean
 };
 
 const initialState : UserState = {
@@ -13,7 +14,8 @@ const initialState : UserState = {
     logedIn: false,
     language: false, // false == English, true == Hebrew
     admin: false,
-    load: true  // the load value is opposite to the screen state!!
+    load: true,  // the load value is opposite to the screen state!!
+    gotClubs: false // check if i got the clubs from the firebase
 };
 
 
@@ -35,6 +37,9 @@ const userSlice = createSlice({
         },
         setAdmin: (state) => {
             state.admin = !state.admin;
+        },
+        updateGotClubsState: (state) => {
+            state.gotClubs = true;
         }
     }
 });

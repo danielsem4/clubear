@@ -67,20 +67,20 @@ const SignUp : FC<Props> = (props) => {
                     <View style={style.headerStyle}>
                         <BackIcon name="arrow-back" size={38} style={style.backIcon} onPress={() => props.navigation.navigate('login')}/>
                     </View>
-                        <TouchableOpacity style={style.imageContainer} onPress={Keyboard.dismiss}>
-                            <Image 
-                            source={require('../assets/clubearLogo1.png')}
-                            style={style.imageStyle}
-                            />
-                        </TouchableOpacity>
-                        <View style={style.inputContainer}>
-                            <Input shortInput={false} placeholder='Full Name*' iconName='user' onChangeText={(text) => setName(text)} />
-                            <Input shortInput={false} placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
-                            <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
-                            <Input shortInput={false} placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
-                            <Input shortInput={false} placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
-                            <Button smallButton={false} color1='#724997' color2='#3F1651' title='Sign up' onPress={signup} />
-                        </View>
+                    <TouchableOpacity style={style.imageContainer} onPress={Keyboard.dismiss}>
+                        <Image 
+                        source={require('../assets/clubearLogo1.png')}
+                        style={style.imageStyle}
+                        />
+                    </TouchableOpacity>
+                    <View style={style.inputContainer}>
+                        <Input shortInput={false} placeholder='Full Name*' iconName='user' onChangeText={(text) => setName(text)} />
+                        <Input shortInput={false} placeholder='Email*' iconName='mail' onChangeText={(text) => setEmail(text)} />
+                        <Input shortInput={false} placeholder='Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setPassword(text)} />
+                        <Input shortInput={false} placeholder='Repeat Password*' iconName='lock1' secureTextEntry onChangeText={(text) => setRepeatPassword(text)} />
+                        <Input shortInput={false} placeholder='Phone Number*' iconName='mobile1' onChangeText={(text) => setPhoneNumber(text)} />
+                        <Button smallButton={false} color1='#724997' color2='#3F1651' title='Sign up' onPress={signup} />
+                    </View>
                 </View>
             </ImageBackground>
         </KeyboardAvoidingView>

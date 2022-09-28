@@ -51,7 +51,7 @@ const style = StyleSheet.create({
     },
     smallButtonText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700'
     }
 })

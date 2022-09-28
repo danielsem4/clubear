@@ -8,6 +8,9 @@ import OrderBox from './orderBox';
 import Product from "./product";
 import ProductByCategory from './productByCategory';
 import NumericInput from './numericInput';
+import PopUp from './popUp';
 
 
-export {Input, Button, SocialButton, SidebarButton, ClubsScroll, ClubsByCity, OrderBox, Product, ProductByCategory, NumericInput }
+export {Input, Button, SocialButton, SidebarButton, ClubsScroll,
+        ClubsByCity, OrderBox, Product, ProductByCategory, NumericInput,
+        PopUp }

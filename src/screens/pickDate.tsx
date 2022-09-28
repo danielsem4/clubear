@@ -37,9 +37,6 @@ const PickDate : FC<ClubsParameters> = (props) => {
     const club = route.params as ClubsParameters;
     const navigation = useNavigation();
 
-    console.log(club.theClub);
-    
-
     const [date, setDate] = useState<Date>(new Date()); // the date
     const [showDatePickerVisibility, setShowDatePickerVisibility] = useState<boolean>(false); // the date select pop up
 
@@ -88,7 +85,7 @@ const PickDate : FC<ClubsParameters> = (props) => {
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
                         <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => navigation.goBack()}/>
                         <Text style={style.headline}>Pick Date</Text>
@@ -100,7 +97,7 @@ const PickDate : FC<ClubsParameters> = (props) => {
                 </TouchableOpacity>
                 <View style={{flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', height: '80%'}}>
                     <View>
-                        <Button smallButton={false} title="Pick Date" color2='#021925' color1='#537895' onPress={() => setShowDatePickerVisibility(true) } />
+                        <Button smallButton={false} title="Pick Date" color1='#09203F' color2='#428399' onPress={() => setShowDatePickerVisibility(true) } />
                         <Text style={{color: 'white', fontSize: 30, textAlign: 'center'}}>Your selected date is</Text>
                         <Text style={{color: 'white', fontSize: 30, textAlign: 'center', marginBottom: '10%'}}> {dateToShow} ? </Text>
                     </View>
@@ -113,9 +110,9 @@ const PickDate : FC<ClubsParameters> = (props) => {
                          style={{backgroundColor: '#333333'}}
                         />
                     </View>
-                    <ImageBackground source={require('../assets/selena_line.png')} style={{height: '63%', width}} />
+                    <Image source={require('../assets/selena_line.png')} style={{height: '45%', width, marginBottom: '20%'}} />
                     <View style={{marginBottom: '5%'}}>
-                        <Button smallButton={false} title="Next" color2='#021925' color1='#537895' onPress={() => props.navigation.navigate('guestAmount', {theClub: club.theClub, day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()})} />
+                        <Button smallButton={false} title="Next" color1="#09203F" color2="#428399" onPress={() => props.navigation.navigate('guestAmount', {theClub: club.theClub, day: date.getDate(), month: date.getMonth() + 1, year: date.getFullYear()})} />
                     </View>
                 </View>
             </ImageBackground>

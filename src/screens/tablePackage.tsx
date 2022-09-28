@@ -6,6 +6,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import { OrderBox } from "../components";
 import { Route, useNavigation, useRoute } from '@react-navigation/native';
+import { PanoramaView } from "@lightbase/react-native-panorama-view";
 import * as firebaseFunctions from '../constants/firebaseauth';
 
 interface OrderParams { // order details
@@ -59,10 +60,21 @@ const TablePackage : FC<OrderParams> = (props) => {
         );
     }
 
+    const PanoramaDetails = () => (
+        <View style={{flex: 1}}>
+          <PanoramaView
+            style={{height: 230}}
+            dimensions={{ height: 230, width: Dimensions.get("window").width }}
+            inputType="mono"
+            imageUrl="je.jpg"
+          />
+        </View>
+      );
+
     return (
         <KeyboardAvoidingView style={style.container} behavior='height'>
             <ImageBackground source={require('../assets/HomeBackground.png')} style={style.imageBackgroundContainer}>
-                <LinearGradient colors={['#021925', '#537895']} style={style.headerWrapper}>
+                <LinearGradient colors={['#09203F', '#428399']} style={style.headerWrapper}>
                     <View style={style.headerContainer}>
                         <BackIcon name="arrow-back" size={36} style={style.backIcon} onPress={() => navigation.goBack()}/>
                         <Text style={style.headline}>Table Pack</Text>
@@ -78,10 +90,9 @@ const TablePackage : FC<OrderParams> = (props) => {
                         <OrderBox tableType="Bar" color="#ff6acb" price={3200} peopleAmount={6} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 3200, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
                         <OrderBox tableType="VIP" color="#c49b46" price={4600} peopleAmount={8} onPress={() => props.navigation.navigate('pickFromMenu', {theClub: order.theClub, day: order.day, month: order.month, year: order.year, phoneNumber: order.phoneNumber, tableMinPrice: 4500, maleAmount: order.maleAmount, femaleAmount: order.femaleAmount})} />
                     </View>
-                   
                         <ImageBackground style={{width: '100%', height: '55%', marginTop: '20%'}} source={require('../assets/clubMap.png')} />
+                    </View>
                     
-                </View>
             </ImageBackground>
         </KeyboardAvoidingView>
     )

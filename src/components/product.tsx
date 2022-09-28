@@ -1,6 +1,10 @@
 import React, { FC, useState, useEffect } from "react";
 import { View, Text, StyleSheet, ImageBackground, Dimensions, TouchableOpacity, Image, FlatList } from 'react-native';
 import Amount from 'react-native-vector-icons/Feather';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import  { useActions }  from '../redux/orderReducer';
 
 
 const {height, width} = Dimensions.get('screen');
@@ -23,28 +27,24 @@ interface ProductProps {
 
 const Product : FC<ProductProps> = (props) => {
 
+    const dispatch = useDispatch(); // exe for redux functions
+    const menuState = useSelector((state: RootState) => state.menu); // get the states from redux
+
     useEffect(() => {
         console.log("useeffect productb");
         
     })
 
-    const minus = (price: number) => {
-        if (amountOfProducts > 0) {
-            setAmountOfProducts(amountOfProducts - 1);
-            setOrderPrice(orderPrice - price);
-            console.log(orderPrice);
-        }  
-    }
+    const [quantity, setQuantity] = useState<number>(0);
 
-    const add = (price: number, id: string) => {
-        setAmountOfProducts(amountOfProducts + 1);
-        setOrderPrice(orderPrice + price);
-        console.log(orderPrice);
-        console.log(id);
+    const finedTheProductIndex = (productName: string) => {
+        const existingCartItemIndex = menuState.products.findIndex(menuState => menuState.name === productName);
+        if (menuState.products[existingCartItemIndex]) {
+            return existingCartItemIndex;
+        } else {
+            return 0;
+        }
     }
-
-    const [amountOfProducts, setAmountOfProducts] = useState<number>(0);
-    const [orderPrice, setOrderPrice] = useState<number>(0);
 
     return (
         <View>
@@ -63,11 +63,19 @@ const Product : FC<ProductProps> = (props) => {
                                 <Text style={{color: '#e6e6e6', fontSize: 18}}>{item.describe}</Text>
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between', width: '40%', marginBottom: '5%'}}>
                                     <Text style={{color: '#e6e6e6', fontSize: 22, fontWeight: 'bold', marginRight: '15%'}}>{item.price} ₪</Text>
-                                    <TouchableOpacity onPress={() => minus(item.price)}>
+                                    <TouchableOpacity onPress={() => dispatch(useActions.minus({
+                                        item,
+                                        quantity,
+                                        amount: 1
+                                    }))}>
                                         <Amount name="minus" size={26}  style={{color: 'silver', marginTop: '5%', marginRight: '10%'}} />
                                     </TouchableOpacity>
-                                    <Text style={{color: '#e6e6e6', fontSize: 24, fontWeight: 'bold'}}>{amountOfProducts}</Text>
-                                    <TouchableOpacity onPress={() => add(item.price, item.name)}>
+                                    <Text style={{color: '#e6e6e6', fontSize: 24, fontWeight: 'bold'}}>{menuState.products[finedTheProductIndex(item.name)].quantity}</Text>
+                                    <TouchableOpacity onPress={() => {dispatch(useActions.add({
+                                        item,
+                                        quantity,
+                                        amount: 1
+                                    }))}}>
                                         <Amount name="plus" size={26} style={{color: 'silver', marginTop: '5%', marginLeft: '10%'}} />
                                     </TouchableOpacity>
                                 </View>
